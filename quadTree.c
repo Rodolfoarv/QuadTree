@@ -12,28 +12,31 @@
 #define SIZE 10
 
 
-
+//Struct that defines the Point inside a Node
 typedef struct Points{
   int x;
   int y;
 } Point ;
 
+
 typedef struct Node Node;
 
+//node that will contain 4 childs, a value and the mean of its childs
 typedef struct Node{
   Point value;
   Node *northEast;
   Node *northWest;
   Node *southEast;
   Node *southWest;
-  double prom;
+  double mean;
 }Node;
 
-
+//Tree which will be our initial structure with a root node
 typedef struct Tree{
   Node *root;
 } QuadTree;
 
+//Method that inserts comparing the node wether its higher on x or y
 Node insert(Node *parentRoot, Node *node);
 
 Node insert(Node *parentRoot, Node *node){

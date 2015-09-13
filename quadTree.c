@@ -7,107 +7,109 @@
  *----------------------------------------------------------*/
 
 
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#define SIZE 10
 
+/********************************
+QuadTree
+*********************************/
 
-//Struct that defines the Point inside a Node
+//Point struct
 typedef struct Points{
   int x;
   int y;
-} Point ;
+} Point;
 
+typedef struct {
+  Point *array;
+  size_t used;
+  size_t size;
+} PointArray;
 
-typedef struct Node Node;
-
-//node that will contain 4 childs, a value and the mean of its childs
-typedef struct Node{
-  Point value;
-  Node *northEast;
-  Node *northWest;
-  Node *southEast;
-  Node *southWest;
+//Node struct
+typedef struct Nodes{
+  struct Nodes *ne;
+  struct Nodes *nw;
+  struct Nodes *se;
+  struct Nodes *sw;
+  unsigned int width;
+  unsigned int height;
+  unsigned int level;
+  unsigned int size;
   double mean;
-}Node;
+  //Poblation of this node which will be represented by the points
+  PointArray pointsArray;
 
-//Tree which will be our initial structure with a root node
-typedef struct Tree{
+
+} Node;
+//Struct QuadTree
+
+typedef struct QuadTree{
   Node *root;
+  unsigned int size;
 } QuadTree;
 
-//Method that inserts comparing the node wether its higher on x or y
-Node insert(Node *parentRoot, Node *node);
-
-Node insert(Node *parentRoot, Node *node){
-  //We are going to compare with 4 ifs, the node will have 4 childs which will be divided in 4 zones
-  // North east, North west, South east and South west, the position will depend if x is higher or less and y is higher or less
-  // from the current node, i.e the root
-  Node temp = *node;
-  Node tempRoot = *parentRoot;
-
-  if (temp.value.x > tempRoot.value.x ){ //then it will be northeast or southeast
-    if (temp.value.y > tempRoot.value.y){ //then it will be northeast
-      if(tempRoot.northEast){ //if northeast is null
-        tempRoot.northEast = &temp;
-        printf("North east inserted!");
-      }else{
-        printf("It has already inserted, don't even bother\n" );
-        /*
-        Node *returnStatement1 = tempRoot.northEast;
-        Node *returnStatement2 = node;
-        return insert(returnStatement1, returnStatement2);
-        */
-      }
-    }else{ //then it will be southeast
-
-    }
-  }else{ //then it will be north west or south west
-    if (temp.value.y > tempRoot.value.y){ //then it will be northwest
-
-    }else{ //then it will be southwest
-
-    }
-  }
 
 
-  if (!temp.northWest ){ //If this object is null
-    printf("%d\n",temp.value.y );
-  }
-
-  return temp;
+/**********************
+Dynamic Point Array Structure
+***********************/
 
 
+void initArray(PointArray *a, size_t initialSize) {
+  a->array = (Point *)malloc(initialSize * sizeof(Point));
+  a->used = 0;
+  a->size = initialSize;
 }
 
+void insertArray(PointArray *a, Point element) {
+  if (a->used == a->size) {
+    a->size *= 2;
+    a->array = (Point *)realloc(a->array, a->size * sizeof(Point));
+  }
+  a->array[a->used++] = element;
+}
+
+void freeArray(PointArray *a) {
+  free(a->array);
+  a->array = NULL;
+  a->used = a->size = 0;
+}
+
+
+
+
+
+
+
 int main(){
-  //Initilization of root and quad tree
+  PointArray a;
+  initArray(&a,1);
+
   Point pt1;
-  pt1.x = 0;
-  pt1.y = 0;
-
-  Node root;
-  root.value = pt1;
-  Node *rootPointer = &root;
-
-  /****************************************** */
-
-  //trying to insert a new node into the tree
   Point pt2;
-  pt2.x = 1;
-  pt2.y = 1;
+  Point pt3;
 
-  Node test;
-  test.value = pt2;
-  Node *testPointer = &test;
+  pt1.x = 1;
+  printf("%d\n",pt1.x );
 
-  insert(rootPointer, testPointer);
+  pt2.x = 2;
+  pt3.x = 3;
 
+  insertArray(&a,pt1);
+  insertArray(&a,pt2);
+  insertArray(&a,pt3);
+  printf("%d\n",a.array[1].x );
+
+  //initArray(&a,pt1);
+  //initArray(&a,pt2);
+  //initArray(&a,pt3);
 
 
 
 
 
   return 1;
-
 }

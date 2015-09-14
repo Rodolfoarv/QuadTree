@@ -57,19 +57,22 @@ typedef struct QuadTree{
 /**********************
 QuadTree routines
 ***********************/
-void insert (Node *root, Point *pt);
+void insert (Node *node, PointArray *a, Point element);
 int size (Point arr[]);
 void initArray(PointArray *a, size_t initialSize);
-void insertArray(PointArray *a, Point *element);
 void freeArray(PointArray *a);
 
 
+void insert(Node *node, PointArray *a, Point element) {
+  PointArray pointsArray = node->pointsArray;
+  printf("Used : %zd\n",pointsArray.used );
+  if (a->used == a->size){
+    printf("Doing a partition\n" );
+    //if the node doesn't have any space then partition the Array
+  }else{
+    a->array[a->used++] = element;
+  }
 
-
-void insert(Node *root, Point *pt){
-  PointArray rootArray = (*root).pointsArray;
-  insertArray(&rootArray, pt);
-  printf("Size: %zd Used %zd\n",(*root).pointsArray.size, (*root).pointsArray.used );
 }
 
 
@@ -88,14 +91,15 @@ void initArray(PointArray *a, size_t initialSize) {
   a->used = 0;
   a->size = initialSize;
 }
-
-void insertArray(PointArray *a, Point *element) {
+/*
+void insertArray(PointArray *a, Point element) {
   if (a->used == a->size) {
     a->size *= 2;
     a->array = (Point *)realloc(a->array, a->size * sizeof(Point));
   }
-  a->array[a->used++] = *element;
+  a->array[a->used++] = element;
 }
+*/
 
 void freeArray(PointArray *a) {
   free(a->array);
@@ -118,16 +122,22 @@ int main(){
   Point pt1;
   pt1.x = 3;
   pt1.y = 4;
-  insert(&root, &pt1);
-
   Point pt2;
-  pt2.x = 3;
+  pt2.x = 10;
   pt2.y = 4;
   Point pt3;
-  pt3.x = 3;
+  pt3.x = 20;
   pt3.y = 4;
-  insert(&root, &pt2);
-  insert(&root, &pt3);
+
+  insert(&root, &root.pointsArray, pt1);
+  insert(&root, &root.pointsArray, pt2);
+  insert(&root, &root.pointsArray, pt3);
+
+  printf("%d\n",root.pointsArray.array[0].x );
+  printf("%d\n",root.pointsArray.array[1].x );
+  printf("%d\n",root.pointsArray.array[2].x );
+
+
 
 
 

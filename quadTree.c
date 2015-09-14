@@ -15,12 +15,14 @@ QuadTree
 typedef struct Points{
   int x;
   int y;
+  int quadrant; //Which will determine the position of the point 1: NE  2:SE  3:SW  4:NW
 } Point;
 
 typedef struct {
   Point *array;
   size_t used;
   size_t size;
+
 } PointArray;
 
 
@@ -50,96 +52,143 @@ typedef struct QuadTree{
 QuadTree routines
 ***********************/
 void insert (Node *node, PointArray *a, Point element);
+void subdivision (Node *node, PointArray *a, Point element);
 int size (Point arr[]);
 void initArray(PointArray *a, size_t initialSize);
 void freeArray(PointArray *a);
+int getQuadrant(Node *node, Point *element);
 
 
 void insert(Node *node, PointArray *a, Point element) {
-  //WE'RE STILL MISSING TO SET A CONDITION IF IT EXCEEDS THE SIZE OF THE TREE
+  printf("%zd con el punto %d %d con %p\n",node->pointsArray.size, element.x, element.y,node);
+  if (a->used == a->size-1){
+    subdivision(node, a, element);
+    freeArray(a);
+  }else if (a-> size == 0){
+      int quadrant = getQuadrant(node, &element);
+      if (quadrant == 1){
+        insert(node->ne,&(node->ne->pointsArray),element);
+      }else if (quadrant == 2){
+        insert(node->se,&(node->se->pointsArray),element);
+      }else if (quadrant == 3){
+        insert(node->sw,&(node->sw->pointsArray),element);
+      }else{
+        insert(node->nw,&(node->nw->pointsArray),element);
 
-  if (a->used == a->size){
-    a->array[a->used++] = element;
-
-    //Allocate memory for the childs
-    node->ne = (Node *)malloc(sizeof(Node));
-    node->nw = (Node *)malloc(sizeof(Node));
-    node->se = (Node *)malloc(sizeof(Node));
-    node->sw = (Node *)malloc(sizeof(Node));
-
-    //Create the array of points for the childs
-    initArray(&(node->ne->pointsArray),3);
-    initArray(&(node->nw->pointsArray),3);
-    initArray(&(node->se->pointsArray),3);
-    initArray(&(node->sw->pointsArray),3);
-
-    //Set the width and height for the childs
-    //NORTH EAST
-    node->ne->upperBound_X = node->upperBound_X;
-    node->ne->lowerBound_X = node->upperBound_X/2;
-    node->ne->upperBound_Y = node->upperBound_Y;
-    node->ne->lowerBound_Y = node->upperBound_Y/2;
-    printf("***** NorthEAST ********\n" );
-    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->ne->lowerBound_X,node->ne->upperBound_X );
-    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->ne->lowerBound_Y,node->ne->upperBound_Y );
-
-    //SOUTH EAST
-    node->se->upperBound_X = node->upperBound_X;
-    node->se->lowerBound_X = node->upperBound_X/2;
-    node->se->upperBound_Y = node->upperBound_Y/2;
-    node->se->lowerBound_Y = node->lowerBound_Y;
-    printf("***** SouthEAST ********\n" );
-    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->se->lowerBound_X,node->se->upperBound_X );
-    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->se->lowerBound_Y,node->se->upperBound_Y );
-
-    //NORTH WEST
-    node->nw->upperBound_X = node->upperBound_X/2;
-    node->nw->lowerBound_X = node->lowerBound_X;
-    node->nw->upperBound_Y = node->upperBound_Y;
-    node->nw->lowerBound_Y = node->upperBound_Y/2;
-    printf("***** NorthWest ********\n" );
-    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->nw->lowerBound_X,node->nw->upperBound_X );
-    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->nw->lowerBound_Y,node->nw->upperBound_Y );
-
-
-    //SOUTH WEST
-    node->sw->upperBound_X = node->upperBound_X/2;
-    node->sw->lowerBound_X = node->lowerBound_X;
-    node->sw->upperBound_Y = node->upperBound_Y/2;
-    node->sw->lowerBound_Y = node->lowerBound_Y;
-    printf("***** SouthWest ********\n" );
-    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->sw->lowerBound_X,node->sw->upperBound_X );
-    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->sw->lowerBound_Y,node->sw->upperBound_Y );
-
-
-    //Distribute the points between the children
-    int i,x,y;
-    for (i = 0; i < a->used; i++) {
-      x = a->array[i].x;
-      y = a->array[i].y;
-      printf("Punto x:%d  y:%d ",x,y );
-      if (x > node->upperBound_X/2){ //NE or SE
-        if (y > node -> upperBound_Y / 2){ //NE
-          insert(node->ne,&(node->ne->pointsArray), a->array[i]);
-          printf("Inserting Node in Northeast\n" );
-        }else{ //SE
-          printf("Inserting Node in Southeast\n" );
-          insert(node->se,&(node->se->pointsArray), a->array[i]);
-        }
-      }else{ //NW, SW
-        if ( y > node-> upperBound_Y/2){ //NW
-          printf("Inserting Node in Northwest\n" );
-          insert(node->nw,&(node->nw->pointsArray), a->array[i]);
-
-        }else{ //SW
-          printf("Inserting Node in Southwest\n" );
-          insert(node->sw,&(node->sw->pointsArray), a->array[i]);
-        }
       }
-    }
-  }else{
+  }else{ //Insert into the original node
     a->array[a->used++] = element;
   }
+}
+
+
+void subdivision (Node *node, PointArray *a, Point element){
+  printf("\nPARTITIONING NODE\n" );
+  a->array[a->used++] = element;
+
+  //Allocate memory for the childs
+  node->ne = (Node *)malloc(sizeof(Node));
+  node->nw = (Node *)malloc(sizeof(Node));
+  node->se = (Node *)malloc(sizeof(Node));
+  node->sw = (Node *)malloc(sizeof(Node));
+
+  //Create the array of points for the childs
+  initArray(&(node->ne->pointsArray),3);
+  initArray(&(node->nw->pointsArray),3);
+  initArray(&(node->se->pointsArray),3);
+  initArray(&(node->sw->pointsArray),3);
+
+  //Set the width and height for the childs
+  //NORTH EAST
+  node->ne->upperBound_X = node->upperBound_X;
+  node->ne->lowerBound_X = node->upperBound_X/2;
+  node->ne->upperBound_Y = node->upperBound_Y;
+  node->ne->lowerBound_Y = node->upperBound_Y/2;
+  //printf("***** NorthEAST ********\n" );
+  //printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->ne->lowerBound_X,node->ne->upperBound_X );
+  //printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->ne->lowerBound_Y,node->ne->upperBound_Y );
+
+  //SOUTH EAST
+  node->se->upperBound_X = node->upperBound_X;
+  node->se->lowerBound_X = node->upperBound_X/2;
+  node->se->upperBound_Y = node->upperBound_Y/2;
+  node->se->lowerBound_Y = node->lowerBound_Y;
+  //printf("***** SouthEAST ********\n" );
+  //printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->se->lowerBound_X,node->se->upperBound_X );
+  //printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->se->lowerBound_Y,node->se->upperBound_Y );
+
+  //NORTH WEST
+  node->nw->upperBound_X = node->upperBound_X/2;
+  node->nw->lowerBound_X = node->lowerBound_X;
+  node->nw->upperBound_Y = node->upperBound_Y;
+  node->nw->lowerBound_Y = node->upperBound_Y/2;
+  //printf("***** NorthWest ********\n" );
+  //printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->nw->lowerBound_X,node->nw->upperBound_X );
+  //printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->nw->lowerBound_Y,node->nw->upperBound_Y );
+
+
+  //SOUTH WEST
+  node->sw->upperBound_X = node->upperBound_X/2;
+  node->sw->lowerBound_X = node->lowerBound_X;
+  node->sw->upperBound_Y = node->upperBound_Y/2;
+  node->sw->lowerBound_Y = node->lowerBound_Y;
+  //printf("***** SouthWest ********\n" );
+  //printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->sw->lowerBound_X,node->sw->upperBound_X );
+  //printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->sw->lowerBound_Y,node->sw->upperBound_Y );
+
+
+  //Distribute the points between the children
+  int i,x,y;
+  for (i = 0; i < a->used; i++) {
+    x = a->array[i].x;
+    y = a->array[i].y;
+    printf("Punto x:%d  y:%d ",x,y );
+    if (x > node->upperBound_X/2){ //NE or SE
+      if (y > node -> upperBound_Y / 2){ //NE
+        insert(node->ne,&(node->ne->pointsArray), a->array[i]);
+        printf("Inserting Node in Northeast\n" );
+      }else{ //SE
+        printf("Inserting Node in Southeast\n" );
+        insert(node->se,&(node->se->pointsArray), a->array[i]);
+      }
+    }else{ //NW, SW
+      if ( y > node-> upperBound_Y/2){ //NW
+        printf("Inserting Node in Northwest\n" );
+        insert(node->nw,&(node->nw->pointsArray), a->array[i]);
+
+      }else{ //SW
+        printf("Inserting Node in Southwest\n" );
+        insert(node->sw,&(node->sw->pointsArray), a->array[i]);
+      }
+    }
+  }
+  printf("END OF PARTITIONING\n" );
+}
+
+int getQuadrant(Node *node, Point *element){
+  int x, y;
+  x = element->x;
+  y = element->y;
+  if (x > node->upperBound_X/2){ //NE or SE
+    if (y > node -> upperBound_Y / 2){ //NE
+      element->quadrant = 1;
+    //printf("Point x: %d   y: %d   Inserting Node in Northeast\n",x,y );
+
+    }else{ //SE
+      element->quadrant = 2;
+      //  printf("Point x: %d   y: %d   Inserting Node in Southeast\n",x,y );
+    }
+  }else{ //NW, SW
+    if ( y > node-> upperBound_Y/2){ //NW
+      element->quadrant = 4;
+        //printf("Point x: %d   y: %d   Inserting Node in Northwest\n",x,y );
+    }else{ //SW
+      element->quadrant = 3;
+        //printf("Point x: %d   y: %d   Inserting Node in Southwest\n",x,y );
+    }
+  }
+  return element->quadrant;
+
 }
 /**********************
 Dynamic Point Array Structure
@@ -152,9 +201,9 @@ int size(Point arr[]){
 
 
 void initArray(PointArray *a, size_t initialSize) {
-  a->array = (Point *)malloc(initialSize * sizeof(Point));
+  a->array = (Point *)malloc((initialSize+1) * sizeof(Point));
   a->used = 0;
-  a->size = initialSize;
+  a->size = initialSize+1;
 }
 
 /*
@@ -169,7 +218,7 @@ void insertArray(PointArray *a, Point element) {
 
 void freeArray(PointArray *a) {
   free(a->array);
-  a->array = NULL;
+  //a->array = NULL;
   a->used = a->size = 0;
 }
 
@@ -190,22 +239,29 @@ int main(){
   //quadTree.root = &root;
   initArray(&root.pointsArray,3);
 
-  Point pt1;
-  pt1.x = 3;
-  pt1.y = 4;
-  Point pt2;
-  pt2.x = 11;
-  pt2.y = 20;
-  Point pt3;
-  pt3.x = 20;
-  pt3.y = 4;
-  Point pt4;
-  pt4.x = 30;
-  pt4.y = 4;
+  Point pt1; pt1.x = 3; pt1.y = 4;
+  Point pt2; pt2.x = 11; pt2.y = 20;
+  Point pt3; pt3.x = 20; pt3.y = 4;
+  Point pt4; pt4.x = 20; pt4.y = 20;
+
+
+  Point pt5; pt5.x = 10; pt5.y = 5;
+  Point pt6; pt6.x = 3; pt6.y = 4;
+  Point pt7; pt7.x = 11; pt7.y = 20;
+  Point pt8; pt8.x = 20; pt8.y = 4;
+  Point pt9; pt9.x = 20; pt9.y = 20;
+  //Point pt10; pt10.x = 10; pt10.y = 5;
 
   insert(&root, &root.pointsArray, pt1);
   insert(&root, &root.pointsArray, pt2);
   insert(&root, &root.pointsArray, pt3);
   insert(&root, &root.pointsArray, pt4);
+
+  insert(&root, &root.pointsArray, pt5);
+  insert(&root, &root.pointsArray, pt6);
+  insert(&root, &root.pointsArray, pt7);
+  insert(&root, &root.pointsArray, pt8);
+  insert(&root, &root.pointsArray, pt9);
+  //insert(&root, &root.pointsArray, pt10);
   return 1;
 }

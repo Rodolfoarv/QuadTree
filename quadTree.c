@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+
 /********************************
 QuadTree
 *********************************/
@@ -34,10 +36,11 @@ typedef struct Nodes{
   struct Nodes *nw;
   struct Nodes *se;
   struct Nodes *sw;
+  unsigned int size;
   unsigned int width;
   unsigned int height;
-  unsigned int level;
-  unsigned int size;
+  char level[30];
+
   double mean;
   //Poblation of this node which will be represented by the points
   PointArray pointsArray;
@@ -48,14 +51,36 @@ typedef struct Nodes{
 
 typedef struct QuadTree{
   Node *root;
-  unsigned int size;
 } QuadTree;
 
+
+/**********************
+QuadTree routines
+***********************/
+void insert (Node *root, Point *pt);
+int size (Point arr[]);
+void initArray(PointArray *a, size_t initialSize);
+void insertArray(PointArray *a, Point *element);
+void freeArray(PointArray *a);
+
+
+
+
+void insert(Node *root, Point *pt){
+  PointArray rootArray = (*root).pointsArray;
+  insertArray(&rootArray, pt);
+  printf("Size: %zd Used %zd\n",(*root).pointsArray.size, (*root).pointsArray.used );
+}
 
 
 /**********************
 Dynamic Point Array Structure
 ***********************/
+
+int size(Point arr[]){
+  int n = sizeof(arr) / sizeof(Point) ;
+  return n;
+}
 
 
 void initArray(PointArray *a, size_t initialSize) {
@@ -64,12 +89,12 @@ void initArray(PointArray *a, size_t initialSize) {
   a->size = initialSize;
 }
 
-void insertArray(PointArray *a, Point element) {
+void insertArray(PointArray *a, Point *element) {
   if (a->used == a->size) {
     a->size *= 2;
     a->array = (Point *)realloc(a->array, a->size * sizeof(Point));
   }
-  a->array[a->used++] = element;
+  a->array[a->used++] = *element;
 }
 
 void freeArray(PointArray *a) {
@@ -80,32 +105,38 @@ void freeArray(PointArray *a) {
 
 
 
-
-
-
-
 int main(){
-  PointArray a;
-  initArray(&a,1);
+  //Create the initial QuadTree Structure
+  //QuadTree quadTree;
+  Node root;
+  root.size = 20;
+  root.width = 20;
+  root.height = 20;
+  //quadTree.root = &root;
+  initArray(&root.pointsArray,3);
 
   Point pt1;
+  pt1.x = 3;
+  pt1.y = 4;
+  insert(&root, &pt1);
+
   Point pt2;
+  pt2.x = 3;
+  pt2.y = 4;
   Point pt3;
-
-  pt1.x = 1;
-  printf("%d\n",pt1.x );
-
-  pt2.x = 2;
   pt3.x = 3;
+  pt3.y = 4;
+  insert(&root, &pt2);
+  insert(&root, &pt3);
 
-  insertArray(&a,pt1);
-  insertArray(&a,pt2);
-  insertArray(&a,pt3);
-  printf("%d\n",a.array[1].x );
 
-  //initArray(&a,pt1);
-  //initArray(&a,pt2);
-  //initArray(&a,pt3);
+
+
+
+
+
+
+
 
 
 

@@ -23,6 +23,7 @@ typedef struct {
   size_t size;
 } PointArray;
 
+
 //Node struct
 typedef struct Nodes{
   struct Nodes *ne;
@@ -30,10 +31,12 @@ typedef struct Nodes{
   struct Nodes *se;
   struct Nodes *sw;
   unsigned int size;
-  unsigned int width;
-  unsigned int height;
   char level[30];
   double mean;
+  int upperBound_X;
+  int lowerBound_X;
+  int upperBound_Y;
+  int lowerBound_Y;
   //Poblation of this node which will be represented by the points
   PointArray pointsArray;
 } Node;
@@ -53,6 +56,8 @@ void freeArray(PointArray *a);
 
 
 void insert(Node *node, PointArray *a, Point element) {
+  //WE'RE STILL MISSING TO SET A CONDITION IF IT EXCEEDS THE SIZE OF THE TREE
+
   if (a->used == a->size){
     a->array[a->used++] = element;
 
@@ -62,10 +67,50 @@ void insert(Node *node, PointArray *a, Point element) {
     node->se = (Node *)malloc(sizeof(Node));
     node->sw = (Node *)malloc(sizeof(Node));
 
+    //Create the array of points for the childs
     initArray(&(node->ne->pointsArray),3);
     initArray(&(node->nw->pointsArray),3);
     initArray(&(node->se->pointsArray),3);
     initArray(&(node->sw->pointsArray),3);
+
+    //Set the width and height for the childs
+    //NORTH EAST
+    node->ne->upperBound_X = node->upperBound_X;
+    node->ne->lowerBound_X = node->upperBound_X/2;
+    node->ne->upperBound_Y = node->upperBound_Y;
+    node->ne->lowerBound_Y = node->upperBound_Y/2;
+    printf("***** NorthEAST ********\n" );
+    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->ne->lowerBound_X,node->ne->upperBound_X );
+    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->ne->lowerBound_Y,node->ne->upperBound_Y );
+
+    //SOUTH EAST
+    node->se->upperBound_X = node->upperBound_X;
+    node->se->lowerBound_X = node->upperBound_X/2;
+    node->se->upperBound_Y = node->upperBound_Y/2;
+    node->se->lowerBound_Y = node->lowerBound_Y;
+    printf("***** SouthEAST ********\n" );
+    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->se->lowerBound_X,node->se->upperBound_X );
+    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->se->lowerBound_Y,node->se->upperBound_Y );
+
+    //NORTH WEST
+    node->nw->upperBound_X = node->upperBound_X/2;
+    node->nw->lowerBound_X = node->lowerBound_X;
+    node->nw->upperBound_Y = node->upperBound_Y;
+    node->nw->lowerBound_Y = node->upperBound_Y/2;
+    printf("***** NorthWest ********\n" );
+    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->nw->lowerBound_X,node->nw->upperBound_X );
+    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->nw->lowerBound_Y,node->nw->upperBound_Y );
+
+
+    //SOUTH WEST
+    node->sw->upperBound_X = node->upperBound_X/2;
+    node->sw->lowerBound_X = node->lowerBound_X;
+    node->sw->upperBound_Y = node->upperBound_Y/2;
+    node->sw->lowerBound_Y = node->lowerBound_Y;
+    printf("***** SouthWest ********\n" );
+    printf("New lowerBound_X : %d   New upperBound_X:  %d\n",node->sw->lowerBound_X,node->sw->upperBound_X );
+    printf("New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n",node->sw->lowerBound_Y,node->sw->upperBound_Y );
+
 
     //Distribute the points between the children
     int i,x,y;
@@ -73,35 +118,29 @@ void insert(Node *node, PointArray *a, Point element) {
       x = a->array[i].x;
       y = a->array[i].y;
       printf("Punto x:%d  y:%d ",x,y );
-      if (x > node->width/2){ //NE or SE
-        if (y > node -> height/2){ //NE
-          
-          printf("Going Northeast\n" );
+      if (x > node->upperBound_X/2){ //NE or SE
+        if (y > node -> upperBound_Y / 2){ //NE
+          insert(node->ne,&(node->ne->pointsArray), a->array[i]);
+          printf("Inserting Node in Northeast\n" );
         }else{ //SE
-          printf("Going Southeast\n" );
+          printf("Inserting Node in Southeast\n" );
+          insert(node->se,&(node->se->pointsArray), a->array[i]);
         }
       }else{ //NW, SW
-        if ( y > node-> height/2){ //NW
-          printf("Going Northwest\n" );
+        if ( y > node-> upperBound_Y/2){ //NW
+          printf("Inserting Node in Northwest\n" );
+          insert(node->nw,&(node->nw->pointsArray), a->array[i]);
 
         }else{ //SW
-          printf("Going Southwest\n" );
-
+          printf("Inserting Node in Southwest\n" );
+          insert(node->sw,&(node->sw->pointsArray), a->array[i]);
         }
       }
-
     }
-
-
-
-
   }else{
     a->array[a->used++] = element;
   }
-
 }
-
-
 /**********************
 Dynamic Point Array Structure
 ***********************/
@@ -141,8 +180,13 @@ int main(){
   //QuadTree quadTree;
   Node root;
   root.size = 20;
-  root.width = 20;
-  root.height = 20;
+
+  root.lowerBound_X = 0;
+  root.upperBound_X = 20;
+  root.lowerBound_Y = 0;
+  root.upperBound_Y = 20;
+
+
   //quadTree.root = &root;
   initArray(&root.pointsArray,3);
 

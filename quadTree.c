@@ -53,12 +53,8 @@ void freeArray(PointArray *a);
 
 
 void insert(Node *node, PointArray *a, Point element) {
-
-  PointArray pointsArray = node->pointsArray;
-  printf("Used : %zd\n",pointsArray.used );
   if (a->used == a->size){
     a->array[a->used++] = element;
-    printf("Doing a partition\n" );
 
     //Allocate memory for the childs
     node->ne = (Node *)malloc(sizeof(Node));
@@ -71,10 +67,28 @@ void insert(Node *node, PointArray *a, Point element) {
     initArray(&(node->se->pointsArray),3);
     initArray(&(node->sw->pointsArray),3);
 
-
     //Distribute the points between the children
-    int i;
+    int i,x,y;
     for (i = 0; i < a->used; i++) {
+      x = a->array[i].x;
+      y = a->array[i].y;
+      printf("Punto x:%d  y:%d ",x,y );
+      if (x > node->width/2){ //NE or SE
+        if (y > node -> height/2){ //NE
+          
+          printf("Going Northeast\n" );
+        }else{ //SE
+          printf("Going Southeast\n" );
+        }
+      }else{ //NW, SW
+        if ( y > node-> height/2){ //NW
+          printf("Going Northwest\n" );
+
+        }else{ //SW
+          printf("Going Southwest\n" );
+
+        }
+      }
 
     }
 
@@ -136,8 +150,8 @@ int main(){
   pt1.x = 3;
   pt1.y = 4;
   Point pt2;
-  pt2.x = 10;
-  pt2.y = 4;
+  pt2.x = 11;
+  pt2.y = 20;
   Point pt3;
   pt3.x = 20;
   pt3.y = 4;
@@ -148,13 +162,6 @@ int main(){
   insert(&root, &root.pointsArray, pt1);
   insert(&root, &root.pointsArray, pt2);
   insert(&root, &root.pointsArray, pt3);
-
-  printf("%d\n",root.pointsArray.array[0].x );
-  printf("%d\n",root.pointsArray.array[1].x );
-  printf("%d\n",root.pointsArray.array[2].x );
-
-  insert(&root, &root.pointsArray, pt3);
-
-  printf("%d\n",root.pointsArray.array[3].x );
+  insert(&root, &root.pointsArray, pt4);
   return 1;
 }

@@ -33,11 +33,11 @@ typedef struct Nodes{
   struct Nodes *sw;
   struct Nodes *parent;
   unsigned int size;
-  char level[30];
-  int upperBound_X;
-  int lowerBound_X;
-  int upperBound_Y;
-  int lowerBound_Y;
+  unsigned int level;
+  unsigned int upperBound_X;
+  unsigned int lowerBound_X;
+  unsigned int upperBound_Y;
+  unsigned int lowerBound_Y;
   //Poblation of this node which will be represented by the points
   PointArray pointsArray;
   PointArray pointsArrayMean; //Array which will be used to calculate the mean and all the points contained in that node
@@ -59,8 +59,8 @@ void initArray(PointArray *a, size_t initialSize);
 void freeArray(PointArray *a);
 int getQuadrant(Node *node, Point *element);
 void getPointsList(Node *node); //Consulta de datos (local)
-void getNodeMean(Node *node);
-void getSiblingList(Node *node);
+void getNodeMean(Node *node);  //Promedio de determinado nodo
+void getNeighborList(Node *node);
 
 void insert(Node *node, PointArray *a, Point element) {
   node->pointsArrayMean.array[node->pointsArrayMean.used++] = element;
@@ -116,6 +116,12 @@ void subdivision (Node *node, PointArray *a, Point element){
   initArray(&(node->nw->pointsArrayMean),3000);
   initArray(&(node->se->pointsArrayMean),3000);
   initArray(&(node->sw->pointsArrayMean),3000);
+
+  //Set the level atribute for the childs
+  node->ne->level = node->level + 1;
+  node->nw->level = node->level + 1;
+  node->se->level = node->level + 1;
+  node->sw->level = node->level + 1;
 
 
   //Set the width and height for the childs
@@ -219,9 +225,14 @@ void getPointsList(Node *node){
   int i;
   printf("******** List of points inside this Node ********* \n" );
   printf("This node has a total of %zd Points\n", node->pointsArrayMean.used  );
-  for (i = 0; i < node->pointsArrayMean.used; i++){
-    printf("(%d, %d)\n",node->pointsArrayMean.array[i].x,node->pointsArrayMean.array[i].y);
+  if (node->ne == NULL || node->nw == NULL || node->se == NULL || node->sw == NULL){
+    for (i = 0; i < node->pointsArrayMean.used; i++){
+      printf("(%d, %d)\n",node->pointsArrayMean.array[i].x,node->pointsArrayMean.array[i].y);
+    }
+  }else{
+    getNodeMean(node);
   }
+
 }
 
 void getNodeMean(Node *node){
@@ -242,9 +253,9 @@ void getNodeMean(Node *node){
 
 }
 
-void getSiblingList(Node *node){
+void getNeighborList(Node *node){
   int i;
-  printf("******** List of sibling points ********* \n" );
+  printf("******** List of Neighbor points ********* \n" );
   for (i = 0; i < node->parent->pointsArrayMean.used; i++){
     printf("(%d, %d)\n",node->parent->pointsArrayMean.array[i].x,node->parent->pointsArrayMean.array[i].y);
   }
@@ -281,6 +292,7 @@ int main(){
   root.upperBound_X = 20;
   root.lowerBound_Y = 0;
   root.upperBound_Y = 20;
+  root.level = 0;
 
 
   //quadTree.root = &root;
@@ -304,6 +316,7 @@ Point pt12; pt12.x = 7; pt12.y = 7;
 Point pt13; pt13.x = 8; pt13.y = 8;
 
 */
+
   insert(&root, &root.pointsArray, pt1);
   insert(&root, &root.pointsArray, pt2);
   insert(&root, &root.pointsArray, pt3);
@@ -314,10 +327,11 @@ Point pt13; pt13.x = 8; pt13.y = 8;
 
 
   //printf("%d\n",root.ne->sw->pointsArray.array[0].y );
-  printf("%d\n",root.ne->nw->pointsArray.array[0].x );
-  getNodeMean(root.ne->ne);
-  getPointsList(&root);
-  getSiblingList(root.ne);
+  printf("%d\n\n\n",root.ne->nw->pointsArray.array[0].x );
+  getNodeMean(root.ne);
+  getPointsList(root.ne->ne);
+  getNeighborList(root.ne);
+  printf("%d\n",root.ne->ne->level );
 /*
 
 

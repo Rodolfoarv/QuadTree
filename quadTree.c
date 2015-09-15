@@ -152,18 +152,18 @@ void subdivision (Node *node, PointArray *a, Point element){
     if (x > (node->upperBound_X + node->lowerBound_X)/2){ //NE or SE
       if (y > (node -> upperBound_Y + node->lowerBound_Y) / 2){ //NE
         insert(node->ne,&(node->ne->pointsArray), a->array[i]);
-        printf("Inserting Node in Northeast\n" ); //1,2,3
+        printf("Inserting Node in Northeast Point: x :%d  y: %d \n" ,x,y ); //1,2,3
       }else{ //SE
-        printf("Inserting Node in Southeast\n" );
+        printf("Inserting Node in Southeast Point: x :%d  y: %d \n",x,y);
         insert(node->se,&(node->se->pointsArray), a->array[i]);
       }
     }else{ //NW, SW
       if ( y > (node-> upperBound_Y + node->lowerBound_Y)/2){ //NW
-        printf("Inserting Node in Northwest\n" );
+        printf("Inserting Node in Northwest Point: x :%d  y: %d \n",x,y );
         insert(node->nw,&(node->nw->pointsArray), a->array[i]);
 
       }else{ //SW
-        printf("Inserting Node in Southwest\n" );
+        printf("Inserting Node in Southwest Point: x :%d  y: %d \n",x,y );
         insert(node->sw,&(node->sw->pointsArray), a->array[i]);
       }
     }
@@ -269,7 +269,7 @@ int main(){
   insert(&root, &root.pointsArray, pt2);
   insert(&root, &root.pointsArray, pt3);
   insert(&root, &root.pointsArray, pt4);
-  printf("%d\n",root.ne->pointsArray.array[2].x );
+  printf("%d\n",root.ne->sw->pointsArray.array[0].x );
 /*
   insert(&root, &root.pointsArray, pt5);
   //insert(&root, &root.pointsArray, pt6);

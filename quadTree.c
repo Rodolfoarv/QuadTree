@@ -31,9 +31,9 @@ typedef struct Nodes{
   struct Nodes *nw;
   struct Nodes *se;
   struct Nodes *sw;
+  struct Nodes *parent;
   unsigned int size;
   char level[30];
-  double mean;
   int upperBound_X;
   int lowerBound_X;
   int upperBound_Y;
@@ -41,10 +41,11 @@ typedef struct Nodes{
   //Poblation of this node which will be represented by the points
   PointArray pointsArray;
   PointArray pointsArrayMean; //Array which will be used to calculate the mean and all the points contained in that node
+
 } Node;
 
 //Struct QuadTree
-typedef struct QuadTree{
+typedef struct {
   Node *root;
 } QuadTree;
 
@@ -59,10 +60,9 @@ void freeArray(PointArray *a);
 int getQuadrant(Node *node, Point *element);
 void getPointsList(Node *node); //Consulta de datos (local)
 void getNodeMean(Node *node);
+void getSiblingList(Node *node);
 
 void insert(Node *node, PointArray *a, Point element) {
-  //printf(" Lower bound: %d Upper bound: %d con el punto %d %d ", node->lowerBound_X, node->upperBound_X, element.x, element.y);
-  //printf("Size: %zd Used: %zd\n", a->size, a->used );
   node->pointsArrayMean.array[node->pointsArrayMean.used++] = element;
   if (a-> size == 0){
     printf("Inserting point x:%d y:%d \n", element.x, element.y );
@@ -97,15 +97,25 @@ void subdivision (Node *node, PointArray *a, Point element){
   node->se = (Node *)malloc(sizeof(Node));
   node->sw = (Node *)malloc(sizeof(Node));
 
+  //Set the parent of the nodes
+  node->ne->parent = (Node *)malloc(sizeof(Node));
+  node->nw->parent = (Node *)malloc(sizeof(Node));
+  node->se->parent = (Node *)malloc(sizeof(Node));
+  node->sw->parent = (Node *)malloc(sizeof(Node));
+  node->ne->parent = node;
+  node->nw->parent = node;
+  node->se->parent = node;
+  node->sw->parent = node;
+
   //Create the array of points for the childs
   initArray(&(node->ne->pointsArray),PARTITION);
   initArray(&(node->nw->pointsArray),PARTITION);
   initArray(&(node->se->pointsArray),PARTITION);
   initArray(&(node->sw->pointsArray),PARTITION);
-  initArray(&(node->ne->pointsArrayMean),PARTITION);
-  initArray(&(node->nw->pointsArrayMean),PARTITION);
-  initArray(&(node->se->pointsArrayMean),PARTITION);
-  initArray(&(node->sw->pointsArrayMean),PARTITION);
+  initArray(&(node->ne->pointsArrayMean),3000);
+  initArray(&(node->nw->pointsArrayMean),3000);
+  initArray(&(node->se->pointsArrayMean),3000);
+  initArray(&(node->sw->pointsArrayMean),3000);
 
 
   //Set the width and height for the childs
@@ -231,6 +241,14 @@ void getNodeMean(Node *node){
   }
 
 }
+
+void getSiblingList(Node *node){
+  int i;
+  printf("******** List of sibling points ********* \n" );
+  for (i = 0; i < node->parent->pointsArrayMean.used; i++){
+    printf("(%d, %d)\n",node->parent->pointsArrayMean.array[i].x,node->parent->pointsArrayMean.array[i].y);
+  }
+}
 /**********************
 Dynamic Point Array Structure
 ***********************/
@@ -298,7 +316,8 @@ Point pt13; pt13.x = 8; pt13.y = 8;
   //printf("%d\n",root.ne->sw->pointsArray.array[0].y );
   printf("%d\n",root.ne->nw->pointsArray.array[0].x );
   getNodeMean(root.ne->ne);
-  getPointsList(root.ne);
+  getPointsList(&root);
+  getSiblingList(root.ne);
 /*
 
 

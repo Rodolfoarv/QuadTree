@@ -61,6 +61,7 @@ int getQuadrant(Node *node, Point *element);
 void getPointsList(Node *node); //Consulta de datos (local)
 void getNodeMean(Node *node);  //Promedio de determinado nodo
 void getNeighborList(Node *node);
+void getListByLevel(Node *node, int level);
 
 void insert(Node *node, PointArray *a, Point element) {
   node->pointsArrayMean.array[node->pointsArrayMean.used++] = element;
@@ -254,12 +255,23 @@ void getNodeMean(Node *node){
 }
 
 void getNeighborList(Node *node){
-  int i;
-  printf("******** List of Neighbor points ********* \n" );
-  for (i = 0; i < node->parent->pointsArrayMean.used; i++){
-    printf("(%d, %d)\n",node->parent->pointsArrayMean.array[i].x,node->parent->pointsArrayMean.array[i].y);
+
+}
+
+void getListByLevel(Node *node, int level){
+  if (node == NULL){
+    return;
+  }else if(node->level == level){
+    getPointsList(node);
+  }else{
+    getListByLevel(node->ne,level);
+    getListByLevel(node->nw,level);
+    getListByLevel(node->se,level);
+    getListByLevel(node->sw,level);
   }
 }
+
+
 /**********************
 Dynamic Point Array Structure
 ***********************/
@@ -328,10 +340,16 @@ Point pt13; pt13.x = 8; pt13.y = 8;
 
   //printf("%d\n",root.ne->sw->pointsArray.array[0].y );
   printf("%d\n\n\n",root.ne->nw->pointsArray.array[0].x );
+    printf("********************** TESTING THE ROUTINE getNodeMean ********************* \n" );
   getNodeMean(root.ne);
+    printf("********************** TESTING THE ROUTINE getPointsListl ********************* \n" );
   getPointsList(root.ne->ne);
   getNeighborList(root.ne);
-  printf("%d\n",root.ne->ne->level );
+
+
+  printf("********************** TESTING THE ROUTINE getListByLevel ********************* \n" );
+  getListByLevel(&root, 2);
+
 /*
 
 

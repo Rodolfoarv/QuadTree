@@ -62,13 +62,15 @@ QuadTree routines
 ***********************/
 void insert (Node *node, PointArray *a, Point element);       //Routine that inserts an item
 void subdivision (Node *node, PointArray *a, Point element);  //Routine that will split the node in 4 nodes i.e (NE,SE,SW,NW)
-void initArray(PointArray *a, size_t initialSize);
-void freeArray(PointArray *a);
-int getQuadrant(Node *node, Point *element);
-void getPointsList(Node *node); //Consulta de datos (local)
-void getNodeMean(Node *node);  //Promedio de determinado nodo
-void getNeighborList(Node *node);
-void getListByLevel(Node *node, int level);
+void initArray(PointArray *a, size_t initialSize);            //Routine used to intialize PointArray
+void freeArray(PointArray *a);                                //Routine used to free a PointArray
+int getQuadrant(Node *node, Point *element);                  //GetQuadrant depending on point in order to distribute it on the nodes
+void getPointsList(Node *node);                               //Get the list of points within a node, it will get the mean if it has childs
+void getNodeMean(Node *node);                                 //Mean of all the points within a node
+void getNeighborList(Node *node);                             //Get all the points that are neighbors to a determined node
+void getListByLevel(Node *node, int level);                   //Get all the points depending on the level
+
+//Neighbor Routines
 void leftNeighborList(Node *node);
 void leftNeighborListUtil(Node *node);
 void rightNeighborList(Node *node);
@@ -77,8 +79,6 @@ void bottomNeighborList(Node *node);
 void bottomNeighborListUtil(Node *node);
 void topNeighborList(Node *node);
 void topNeighborListUtil(Node *node);
-
-
 
 
 void insert(Node *node, PointArray *a, Point element) {
@@ -100,14 +100,13 @@ void insert(Node *node, PointArray *a, Point element) {
     subdivision(node, a, element);
     freeArray(a);
   }else{ //Insert into the original node
-    printf("Inserting point x:%d y:%d", element.x, element.y );
+    printf("Inserting point x:%d y:%d \n", element.x, element.y );
     a->array[a->used++] = element;
   }
 }
 
 
 void subdivision (Node *node, PointArray *a, Point element){
-  //printf("\nPARTITIONING NODE\n" );
   a->array[a->used++] = element;
 
   //Allocate memory for the childs
@@ -217,7 +216,6 @@ void subdivision (Node *node, PointArray *a, Point element){
   for (i = 0; i < a->size; i++) {
     x = a->array[i].x;
     y = a->array[i].y;
-    //printf("Punto x:%d  y:%d ",x,y );
     if (x > (node->upperBound_X + node->lowerBound_X)/2){ //NE or SE
       if (y > (node -> upperBound_Y + node->lowerBound_Y) / 2){ //NE
         insert(node->ne,&(node->ne->pointsArray), a->array[i]);
@@ -247,19 +245,19 @@ int getQuadrant(Node *node, Point *element){
   if (x > node->upperBound_X/2){ //NE or SE
     if (y > node -> upperBound_Y / 2){ //NE
       element->quadrant = 1;
-    //printf("Point x: %d   y: %d   Inserting Node in Northeast\n",x,y );
+
 
     }else{ //SE
       element->quadrant = 2;
-      //  printf("Point x: %d   y: %d   Inserting Node in Southeast\n",x,y );
+
     }
   }else{ //NW, SW
     if ( y > node-> upperBound_Y/2){ //NW
       element->quadrant = 4;
-        //printf("Point x: %d   y: %d   Inserting Node in Northwest\n",x,y );
+
     }else{ //SW
       element->quadrant = 3;
-        //printf("Point x: %d   y: %d   Inserting Node in Southwest\n",x,y );
+
     }
   }
   return element->quadrant;
@@ -292,7 +290,6 @@ void getNodeMean(Node *node){
     int i;
     double x,y;
     for (i = 0; i < node->pointsArrayMean.used; i++){
-      printf("Point :%d , %d\n",node->pointsArrayMean.array[i].x,node->pointsArrayMean.array[i].y );
       x+= node->pointsArrayMean.array[i].x;
       y+= node->pointsArrayMean.array[i].y;
     }
@@ -303,10 +300,15 @@ void getNodeMean(Node *node){
 
 }
 void getNeighborList(Node *node){
-  //Obtain the right neighbors
-  leftNeighborList(node);
-  rightNeighborList(node);
-  topNeighborList(node);
+  if (node == NULL){
+    printf("This node doesn't exist\n" );
+  }else{
+    leftNeighborList(node);
+    rightNeighborList(node);
+    topNeighborList(node);
+    bottomNeighborList(node);
+  }
+
 
 }
 
@@ -372,7 +374,7 @@ void topNeighborList(Node *node){
     if (node->topNeighbor == NULL){
       topNeighborList(node->parent);
     }else{
-      topNeighborListUtil(node->rightNeighbor);
+      topNeighborListUtil(node->topNeighbor);
     }
   }else{
     topNeighborList(node->parent);
@@ -391,13 +393,13 @@ void topNeighborListUtil(Node *node){
 void bottomNeighborList(Node *node){
   if (node->level == 1){
     if (node->bottomNeighbor != NULL){
-      bottomNeighborListUtil(node->topNeighbor);
+      bottomNeighborListUtil(node->bottomNeighbor);
     }
   }else if(node->level == 2){
     if (node->bottomNeighbor == NULL){
       bottomNeighborList(node->parent);
     }else{
-      bottomNeighborListUtil(node->rightNeighbor);
+      bottomNeighborListUtil(node->bottomNeighbor);
     }
   }else{
     bottomNeighborList(node->parent);
@@ -445,7 +447,7 @@ void freeArray(PointArray *a) {
 
 int main(){
   //Create the initial QuadTree Structure
-  //QuadTree quadTree;
+  QuadTree quadTree;
   Node root;
   root.size = 20;
 
@@ -454,15 +456,17 @@ int main(){
   root.lowerBound_Y = 0;
   root.upperBound_Y = 20;
   root.level = 0;
-
-
-  //quadTree.root = &root;
+  quadTree.root = &root;
   initArray(&root.pointsArray,PARTITION);
   initArray(&root.pointsArrayMean,3000);
+
+  printf("\n\n********************* Testing the routine insert ********************* \n" );
 
   Point pt1; pt1.x = 1 ; pt1.y = 1; insert(&root, &root.pointsArray, pt1);
   Point pt2; pt2.x = 2 ; pt2.y = 3; insert(&root, &root.pointsArray, pt2);
   Point pt3; pt3.x = 15 ; pt3.y = 17; insert(&root, &root.pointsArray, pt3);
+
+  printf("\n\n********************* Testing the routine subdivision (inserting a 4th point) ********************* \n" );
   Point pt4; pt4.x = 10 ; pt4.y = 16; insert(&root, &root.pointsArray, pt4);
   Point pt5; pt5.x = 13 ; pt5.y = 13; insert(&root, &root.pointsArray, pt5);
   Point pt6; pt6.x = 9 ; pt6.y = 12; insert(&root, &root.pointsArray, pt6);
@@ -471,32 +475,20 @@ int main(){
   Point pt9; pt9.x = 12 ; pt9.y = 17; insert(&root, &root.pointsArray, pt9);
   Point pt10; pt10.x = 11 ; pt10.y = 12; insert(&root, &root.pointsArray, pt10);
 
-  printf("********************* Testing the routine getNeighborList ********************* \n" );
-  getNeighborList(root.ne->ne);
-
-
-
-
-
-
-/*
-  //printf("%d\n",root.ne->sw->pointsArray.array[0].y );
-
-  printf("%d\n\n\n",root.ne->nw->pointsArray.array[0].x );
-    printf("********************** TESTING THE ROUTINE getNodeMean ********************* \n" );
+  printf("\n\n********************* Testing the routine mean on the north east, node level 2 ********************* \n" );
   getNodeMean(root.ne);
-    printf("********************** TESTING THE ROUTINE getPointsListl ********************* \n" );
-  getPointsList(root.ne->ne);
-  getNeighborList(root.ne);
 
+  printf("\n\n********************* Testing the routine getPointsList with northWest Node (prints the mean)  ********************* \n" );
+  getPointsList(root.nw);
 
-  printf("********************** TESTING THE ROUTINE getListByLevel ********************* \n" );
+  printf("\n\n********************* Testing the routine getPointsList with NorthWest -> SouthEast (prints points)  ********************* \n" );
+  getPointsList(root.nw->se);
+
+  printf("\n\n********************* Testing the routine getNeighborList ********************* \n" );
+  getNeighborList(root.se);
+
+  printf("\n\n********************* Testing the routine getListByLevel ********************* \n" );
   getListByLevel(&root, 2);
-
-  printf("********************** TESTING THE ROUTINE getNeighborList ********************* \n" );
-  //getNeighborList(root.se);
-  getPointsList(root.sw);
-*/
 
   return 1;
 }

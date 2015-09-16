@@ -28,3 +28,7 @@ The program has a main routine in order to explain the different outputs that ar
 ## Authors
 * Rodolfo Andrés Ramírez Valenzuela <rodolfo@ramirezvalenzuela.com>
 * Luis Eduardo Ballinas Aguilar <lu15bytes@gmail.com>
+
+## License
+
+See [LICENSE] (https://github.com/Rodolfoarv/QuadTree/blob/master/LICENSE)

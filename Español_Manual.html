@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="AsciiDoc 8.6.9">
+<title>Examen 1er Parcial: Elaboración de un Quadtree.</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+pre {
+  padding: 0;
+  margin: 0;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #777777;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+tt {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+.monospaced {
+  font-family: monospace;
+  font-size: inherit;
+  color: navy;
+}
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+/*
+ * Theme specific overrides of the preceding (asciidoc.css) CSS.
+ *
+ */
+body {
+  font-family: Garamond, Georgia, serif;
+  font-size: 17px;
+  color: #3E4349;
+  line-height: 1.3em;
+}
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Garmond, Georgia, serif;
+  font-weight: normal;
+  border-bottom-width: 0;
+  color: #3E4349;
+}
+div.title, caption.title { color: #596673; font-weight: bold; }
+h1 { font-size: 240%; }
+h2 { font-size: 180%; }
+h3 { font-size: 150%; }
+h4 { font-size: 130%; }
+h5 { font-size: 115%; }
+h6 { font-size: 100%; }
+#header h1 { margin-top: 0; }
+#toc {
+  color: #444444;
+  line-height: 1.5;
+  padding-top: 1.5em;
+}
+#toctitle {
+  font-size: 20px;
+}
+#toc a {
+    border-bottom: 1px dotted #999999;
+    color: #444444 !important;
+    text-decoration: none !important;
+}
+#toc a:hover {
+    border-bottom: 1px solid #6D4100;
+    color: #6D4100 !important;
+    text-decoration: none !important;
+}
+div.toclevel1 { margin-top: 0.2em; font-size: 16px; }
+div.toclevel2 { margin-top: 0.15em; font-size: 14px; }
+em, dt, td.hdlist1 { color: black; }
+strong { color: #3E4349; }
+a { color: #004B6B; text-decoration: none; border-bottom: 1px dotted #004B6B; }
+a:visited { color: #615FA0; border-bottom: 1px dotted #615FA0; }
+a:hover { color: #6D4100; border-bottom: 1px solid #6D4100; }
+div.tableblock > table, table.tableblock { border: 3px solid #E8E8E8; }
+th.tableblock, td.tableblock { border: 1px solid #E8E8E8; }
+ul > li > * { color: #3E4349; }
+pre, tt, .monospaced { font-family: Consolas,Menlo,'Deja Vu Sans Mono','Bitstream Vera Sans Mono',monospace; }
+tt, .monospaced { font-size: 0.9em; color: black;
+}
+div.exampleblock > div.content, div.sidebarblock > div.content, div.listingblock > div.content { border-width: 0 0 0 3px; border-color: #E8E8E8; }
+div.verseblock { border-left-width: 0; margin-left: 3em; }
+div.quoteblock { border-left-width: 3px; margin-left: 0; margin-right: 0;}
+div.admonitionblock td.content { border-left: 3px solid #E8E8E8; }
+
+.hll { background-color: #ffffcc }
+.c { color: #8f5902; font-style: italic } /* Comment */
+.err { color: #a40000; border: 1px solid #ef2929 } /* Error */
+.g { color: #000000 } /* Generic */
+.k { color: #204a87; font-weight: bold } /* Keyword */
+.l { color: #000000 } /* Literal */
+.n { color: #000000 } /* Name */
+.o { color: #ce5c00; font-weight: bold } /* Operator */
+.x { color: #000000 } /* Other */
+.p { color: #000000; font-weight: bold } /* Punctuation */
+.cm { color: #8f5902; font-style: italic } /* Comment.Multiline */
+.cp { color: #8f5902; font-style: italic } /* Comment.Preproc */
+.c1 { color: #8f5902; font-style: italic } /* Comment.Single */
+.cs { color: #8f5902; font-style: italic } /* Comment.Special */
+.gd { color: #a40000 } /* Generic.Deleted */
+.ge { color: #000000; font-style: italic } /* Generic.Emph */
+.gr { color: #ef2929 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #000000; font-style: italic } /* Generic.Output */
+.gp { color: #8f5902 } /* Generic.Prompt */
+.gs { color: #000000; font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #a40000; font-weight: bold } /* Generic.Traceback */
+.kc { color: #204a87; font-weight: bold } /* Keyword.Constant */
+.kd { color: #204a87; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #204a87; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #204a87; font-weight: bold } /* Keyword.Pseudo */
+.kr { color: #204a87; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #204a87; font-weight: bold } /* Keyword.Type */
+.ld { color: #000000 } /* Literal.Date */
+.m { color: #0000cf; font-weight: bold } /* Literal.Number */
+.s { color: #4e9a06 } /* Literal.String */
+.na { color: #c4a000 } /* Name.Attribute */
+.nb { color: #204a87 } /* Name.Builtin */
+.nc { color: #000000 } /* Name.Class */
+.no { color: #000000 } /* Name.Constant */
+.nd { color: #5c35cc; font-weight: bold } /* Name.Decorator */
+.ni { color: #ce5c00 } /* Name.Entity */
+.ne { color: #cc0000; font-weight: bold } /* Name.Exception */
+.nf { color: #000000 } /* Name.Function */
+.nl { color: #f57900 } /* Name.Label */
+.nn { color: #000000 } /* Name.Namespace */
+.nx { color: #000000 } /* Name.Other */
+.py { color: #000000 } /* Name.Property */
+.nt { color: #204a87; font-weight: bold } /* Name.Tag */
+.nv { color: #000000 } /* Name.Variable */
+.ow { color: #204a87; font-weight: bold } /* Operator.Word */
+.w { color: #f8f8f8; text-decoration: underline } /* Text.Whitespace */
+.mf { color: #0000cf; font-weight: bold } /* Literal.Number.Float */
+.mh { color: #0000cf; font-weight: bold } /* Literal.Number.Hex */
+.mi { color: #0000cf; font-weight: bold } /* Literal.Number.Integer */
+.mo { color: #0000cf; font-weight: bold } /* Literal.Number.Oct */
+.sb { color: #4e9a06 } /* Literal.String.Backtick */
+.sc { color: #4e9a06 } /* Literal.String.Char */
+.sd { color: #8f5902; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #4e9a06 } /* Literal.String.Double */
+.se { color: #4e9a06 } /* Literal.String.Escape */
+.sh { color: #4e9a06 } /* Literal.String.Heredoc */
+.si { color: #4e9a06 } /* Literal.String.Interpol */
+.sx { color: #4e9a06 } /* Literal.String.Other */
+.sr { color: #4e9a06 } /* Literal.String.Regex */
+.s1 { color: #4e9a06 } /* Literal.String.Single */
+.ss { color: #4e9a06 } /* Literal.String.Symbol */
+.bp { color: #3465a4 } /* Name.Builtin.Pseudo */
+.vc { color: #000000 } /* Name.Variable.Class */
+.vg { color: #000000 } /* Name.Variable.Global */
+.vi { color: #000000 } /* Name.Variable.Instance */
+.il { color: #0000cf; font-weight: bold } /* Literal.Number.Integer.Long */
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>Examen 1er Parcial: Elaboración de un Quadtree.</h1>
+<span id="author">Rodolfo Andrés Ramírez Valenzuela (A01169701) y Luis Eduardo Ballinas Aguilar (A01371743)</span><br>
+<span id="email" class="monospaced">&lt;<a href="mailto:A01169701@itesm.mx y  A01371743@itesm.mx">A01169701@itesm.mx y  A01371743@itesm.mx</a>&gt;</span><br>
+<span id="revdate">16 de septiembre, 2015.</span>
+<div id="toc">
+  <div id="toctitle">Tabla de contenidos</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introducción">1. Introducción</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>El siguiente programa fue elaborado, como entrega de 1er parcial para la materia de
+Programación avanzada por Rodolfo Andrés Ramírez Valenzuela y Luis Eduardo Ballinas
+Aguilar.</p></div>
+<div class="paragraph"><p>En este reporte se detalla a nivel usuario la funcionalidad del programa, usando los
+conocimientos adquiridos en la clase y también, indagando por nuestra cuenta.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_quadtree">2. Quadtree</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>A lo largo de las lineas de código, se muestra comentado, para facilitar el entendimiento
+del mismo y que sea más facíl su comprensión.</p></div>
+<div class="paragraph"><p>Se declararon 3 <strong>struct</strong>, el primero llamado <strong>point</strong> hace referencia al punto con cordenadas
+en <em>x</em> y <em>y</em>, el segundo llamado <strong>PointArray</strong>, que se ocupa para almacnar las instancias del
+<strong>struct</strong> anterior, y el último, que recibe el nombre de <strong>Node</strong>, el cual como su nombre lo indica,
+es el <strong>struct</strong>, que representa a los nodos del <em>QuadTree</em>.</p></div>
+<div class="paragraph"><p>Se definen 17 metodos, los cuales se encuentran clasificados de dos formas.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+QuadTree routines.
+</p>
+</li>
+<li>
+<p>
+Neighbor Routines.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>En la primera clasificación, se encuentran 9 metodos, que corresponden a la directa funcionalidad del
+<em>QuadTree</em>.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>insert</strong>: Este método, recibe de parametros: un apuntador a una variable de tipo <strong>Node</strong>, un apuntador a
+una variable de tipo <strong>PointArray</strong> y una variable de tipo <strong>Point</strong>.
+Este método tiene como proposito, <em>insertar</em> un <em>nodo</em> en el <em>QuadTree</em>, respetando las reglas que rigen
+a este tipo de estructuras.
+</p>
+</li>
+<li>
+<p>
+<strong>subdivision</strong>: Este método, recibe de parametros: un apuntador a una variable de tipo <strong>Node</strong>, un apuntador a
+una variable de tipo <strong>PointArray</strong> y una variable de tipo <strong>Point</strong>.
+Este método se encarga de asignarle a un <em>nodo padre</em>  sus respectivos <strong>4 hijos</strong>, es decir se encarga de <strong>dividir uniformemente el espacio</strong>.
+</p>
+</li>
+<li>
+<p>
+<strong>initArray</strong>: Este método, recibe de parametros: Un apuntador a una variable de tipo <strong>PointArray</strong>, y una
+variable de tipo <strong>size_t</strong>.
+Este metodo se encarga de iniciar el <strong>PointArray</strong>. que es en donde se guardarán los puntos en un nodo.
+</p>
+</li>
+<li>
+<p>
+<strong>freeArray</strong>: Este método, recibe de parametros: Un apuntador a una variable de tipo <strong>PointArray</strong>.
+Este método se encarga de <em>liberar</em> el <strong>PointArray</strong>.
+</p>
+</li>
+<li>
+<p>
+<strong>getQuadrant</strong>: Recibe de parametros: Un apuntador hacia una variable de tipo <strong>Node</strong>, y un apuntador hacia una variable de tipo <strong>Point</strong>.
+Este método, se encarga de, <strong>regresar un int entre 1 y 4</strong>, indicando el <strong>cuadrante</strong>, al que dicho nodo pertenece.
+</p>
+</li>
+<li>
+<p>
+<strong>getPointsList</strong>: Recibe de parametro, un apuntador a una variable de tipo <strong>Node</strong>.
+Obtiene los puntos dentro de ese nodo, y de tener hijos, regresa el promedio de esos puntos.
+</p>
+</li>
+<li>
+<p>
+<strong>getNodeMean</strong>: Recibe de parametro, un apuntador a una variable de tipo <strong>Node</strong>.
+Obtiene el promedio de los puntos que tiene un Nodo.
+</p>
+</li>
+<li>
+<p>
+<strong>getNeighborList</strong>: Recibe de parametro, un apuntador a una variable de tipo <strong>Node</strong>.
+Obtiene los puntos que son <strong>vecinos</strong> a un <strong>nodo</strong> determinado.
+</p>
+</li>
+<li>
+<p>
+<strong>getListByLevel</strong>: Recibe de parametrosÑ  un apuntador a una variable de tipo <strong>Node</strong> y una variable de tipo
+<strong>int</strong>.
+Obtiene todos los puntos dependiendo del nivel especificado.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>En la segunda clasificación, los metodos restantes, todos reciben de parametro, un apuntador a una variable de tipo <strong>Node</strong>, y dichos metodos, sirven para identificar los nodos que son vecinos a un punto, y posteriormente se llaman en el método conocido como <strong>getNeighborList</strong>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Nota" src="data:image/png;base64,
+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
+YII=">
+</td>
+<td class="content">
+<div class="title">NOTA</div>
+<div class="paragraph"><p>El código completo se muestra a continuación:</p></div>
+</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre><span class="cm">/*----------------------------------------------------------</span>
+<span class="cm"> * Examen práctico 1: QuadTree</span>
+<span class="cm"> * Fecha: 15-Sep-2015</span>
+<span class="cm"> * Autores:</span>
+<span class="cm"> *           A01169701 Rodolfo Andrés Ramírez Valenzuela</span>
+<span class="cm"> *           A01371743 Luis Eduardo Ballinas Aguilar</span>
+<span class="cm"> *----------------------------------------------------------*/</span>
+<span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#include &lt;stdlib.h&gt;</span>
+<span class="cp">#define PARTITION 3</span>
+<span class="cm">/********************************</span>
+<span class="cm">QuadTree</span>
+<span class="cm">*********************************/</span>
+<span class="c1">//Point struct which will store points in the form (x,y)</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">Points</span><span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">quadrant</span><span class="p">;</span> <span class="c1">//Which will determine the position of the point 1: NE  2:SE  3:SW  4:NW</span>
+<span class="p">}</span> <span class="n">Point</span><span class="p">;</span>
+
+<span class="c1">//Struct PointArray which will be used to store instances of the struct Point</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Point</span> <span class="o">*</span><span class="n">array</span><span class="p">;</span>
+  <span class="kt">size_t</span> <span class="n">used</span><span class="p">;</span>
+  <span class="kt">size_t</span> <span class="n">size</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">PointArray</span><span class="p">;</span>
+
+
+<span class="c1">//Node struct is the main structure</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">Nodes</span><span class="p">{</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">ne</span><span class="p">;</span>             <span class="c1">//NorthEast Node</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">nw</span><span class="p">;</span>             <span class="c1">//NorthWest Node</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">se</span><span class="p">;</span>             <span class="c1">//SouthEast Node</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">sw</span><span class="p">;</span>             <span class="c1">//SouthWest Node</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span>         <span class="c1">//The node&#39;s parent</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">size</span><span class="p">;</span>            <span class="c1">// Size of the current node</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">level</span><span class="p">;</span>           <span class="c1">//Level on the tree i.e (1,2,3,4,5)</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">upperBound_X</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">lowerBound_X</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">upperBound_Y</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">lowerBound_Y</span><span class="p">;</span>
+  <span class="n">PointArray</span> <span class="n">pointsArray</span><span class="p">;</span>       <span class="c1">//array that will store the points on a node</span>
+  <span class="n">PointArray</span> <span class="n">pointsArrayMean</span><span class="p">;</span> <span class="c1">//Array which will be used to calculate the mean and all the points contained in that node</span>
+
+  <span class="c1">//Neighbor List</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">leftNeighbor</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">rightNeighbor</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">bottomNeighbor</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">Nodes</span> <span class="o">*</span><span class="n">topNeighbor</span><span class="p">;</span>
+
+
+<span class="p">}</span> <span class="n">Node</span><span class="p">;</span>
+
+<span class="c1">//The main structure, the root</span>
+<span class="c1">//Struct QuadTree</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Node</span> <span class="o">*</span><span class="n">root</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">QuadTree</span><span class="p">;</span>
+
+<span class="cm">/**********************</span>
+<span class="cm">QuadTree routines</span>
+<span class="cm">***********************/</span>
+<span class="kt">void</span> <span class="nf">insert</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">element</span><span class="p">);</span>       <span class="c1">//Routine that inserts an item</span>
+<span class="kt">void</span> <span class="nf">subdivision</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">element</span><span class="p">);</span>  <span class="c1">//Routine that will split the node in 4 nodes i.e (NE,SE,SW,NW)</span>
+<span class="kt">void</span> <span class="nf">initArray</span><span class="p">(</span><span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">initialSize</span><span class="p">);</span>            <span class="c1">//Routine used to intialize PointArray</span>
+<span class="kt">void</span> <span class="nf">freeArray</span><span class="p">(</span><span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">);</span>                                <span class="c1">//Routine used to free a PointArray</span>
+<span class="kt">int</span> <span class="nf">getQuadrant</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">Point</span> <span class="o">*</span><span class="n">element</span><span class="p">);</span>                  <span class="c1">//GetQuadrant depending on point in order to distribute it on the nodes</span>
+<span class="kt">void</span> <span class="nf">getPointsList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>                               <span class="c1">//Get the list of points within a node, it will get the mean if it has childs</span>
+<span class="kt">void</span> <span class="nf">getNodeMean</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>                                 <span class="c1">//Mean of all the points within a node</span>
+<span class="kt">void</span> <span class="nf">getNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>                             <span class="c1">//Get all the points that are neighbors to a determined node</span>
+<span class="kt">void</span> <span class="nf">getListByLevel</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="kt">int</span> <span class="n">level</span><span class="p">);</span>                   <span class="c1">//Get all the points depending on the level</span>
+
+<span class="c1">//Neighbor Routines</span>
+<span class="kt">void</span> <span class="nf">leftNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">leftNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">rightNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">rightNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">bottomNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">bottomNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">topNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">topNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">);</span>
+
+
+<span class="kt">void</span> <span class="nf">insert</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">element</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">array</span><span class="p">[</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">-&gt;</span> <span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">quadrant</span> <span class="o">=</span> <span class="n">getQuadrant</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">element</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">quadrant</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+      <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">element</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">quadrant</span> <span class="o">==</span> <span class="mi">2</span><span class="p">){</span>
+      <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">element</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">quadrant</span> <span class="o">==</span> <span class="mi">3</span><span class="p">){</span>
+      <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">element</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">element</span><span class="p">);</span>
+
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">-&gt;</span><span class="n">used</span> <span class="o">==</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Number of points exceeded, partitioning into nodes!</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+    <span class="n">subdivision</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">element</span><span class="p">);</span>
+    <span class="n">freeArray</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//Insert into the original node</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Inserting point x:%d y:%d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">element</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">element</span><span class="p">.</span><span class="n">y</span> <span class="p">);</span>
+    <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">a</span><span class="o">-&gt;</span><span class="n">used</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kt">void</span> <span class="nf">subdivision</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="n">Point</span> <span class="n">element</span><span class="p">){</span>
+  <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">a</span><span class="o">-&gt;</span><span class="n">used</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">element</span><span class="p">;</span>
+
+  <span class="c1">//Allocate memory for the childs</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+
+  <span class="c1">//Set the parent of the nodes</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Node</span><span class="p">));</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">parent</span> <span class="o">=</span> <span class="n">node</span><span class="p">;</span>
+
+  <span class="c1">//Create the array of points for the childs</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">PARTITION</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">PARTITION</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">PARTITION</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span><span class="n">PARTITION</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">),</span><span class="mi">3000</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">),</span><span class="mi">3000</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">),</span><span class="mi">3000</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">),</span><span class="mi">3000</span><span class="p">);</span>
+
+  <span class="c1">//Set the level atribute for the childs</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+
+  <span class="c1">//Neighbors for the split</span>
+    <span class="c1">//North East</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+      <span class="c1">//South East</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">;</span>
+
+      <span class="c1">//South West</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">;</span>
+
+      <span class="c1">//North West</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">;</span>
+      <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+
+
+  <span class="c1">//Set the width and height for the childs</span>
+  <span class="c1">//NORTH EAST</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+  <span class="cm">/*</span>
+<span class="cm">  printf(&quot;***** NorthEAST ********\n&quot; );</span>
+<span class="cm">  printf(&quot;New lowerBound_X : %d   New upperBound_X:  %d\n&quot;,node-&gt;ne-&gt;lowerBound_X,node-&gt;ne-&gt;upperBound_X );</span>
+<span class="cm">  printf(&quot;New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n&quot;,node-&gt;ne-&gt;lowerBound_Y,node-&gt;ne-&gt;upperBound_Y );</span>
+<span class="cm">  */</span>
+  <span class="c1">//SOUTH EAST</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">;</span>
+  <span class="cm">/*</span>
+<span class="cm">  printf(&quot;***** SouthEAST ********\n&quot; );</span>
+<span class="cm">  printf(&quot;New lowerBound_X : %d   New upperBound_X:  %d\n&quot;,node-&gt;se-&gt;lowerBound_X,node-&gt;se-&gt;upperBound_X );</span>
+<span class="cm">  printf(&quot;New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n&quot;,node-&gt;se-&gt;lowerBound_Y,node-&gt;se-&gt;upperBound_Y );</span>
+<span class="cm">*/</span>
+  <span class="c1">//NORTH WEST</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+  <span class="cm">/*</span>
+<span class="cm">  printf(&quot;***** NorthWest ********\n&quot; );</span>
+<span class="cm">  printf(&quot;New lowerBound_X : %d   New upperBound_X:  %d\n&quot;,node-&gt;nw-&gt;lowerBound_X,node-&gt;nw-&gt;upperBound_X );</span>
+<span class="cm">  printf(&quot;New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n&quot;,node-&gt;nw-&gt;lowerBound_Y,node-&gt;nw-&gt;upperBound_Y );</span>
+<span class="cm">  */</span>
+
+  <span class="c1">//SOUTH WEST</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">=</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">;</span>
+  <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span> <span class="o">=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">;</span>
+  <span class="cm">/*</span>
+<span class="cm">  printf(&quot;***** SouthWest ********\n&quot; );</span>
+<span class="cm">  printf(&quot;New lowerBound_X : %d   New upperBound_X:  %d\n&quot;,node-&gt;sw-&gt;lowerBound_X,node-&gt;sw-&gt;upperBound_X );</span>
+<span class="cm">  printf(&quot;New lowerBound_Y : %d   New upperBound_Y:  %d\n\n\n&quot;,node-&gt;sw-&gt;lowerBound_Y,node-&gt;sw-&gt;upperBound_Y );</span>
+<span class="cm">  */</span>
+
+  <span class="c1">//Distribute the points between the children</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_X</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">){</span> <span class="c1">//NE or SE</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">node</span> <span class="o">-&gt;</span> <span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">){</span> <span class="c1">//NE</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Inserting Node in Northeast Point: x :%d  y: %d </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">);</span> <span class="c1">//1,2,3</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//SE</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Inserting Node in Southeast Point: x :%d  y: %d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+      <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//NW, SW</span>
+      <span class="k">if</span> <span class="p">(</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span> <span class="n">upperBound_Y</span> <span class="o">+</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">lowerBound_Y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">){</span> <span class="c1">//NW</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Inserting Node in Northwest Point: x :%d  y: %d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">);</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//SW</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Inserting Node in Southwest Point: x :%d  y: %d </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">);</span>
+        <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">,</span><span class="o">&amp;</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="o">-&gt;</span><span class="n">pointsArray</span><span class="p">),</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;END OF PARTITIONING</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">getQuadrant</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="n">Point</span> <span class="o">*</span><span class="n">element</span><span class="p">){</span>
+  <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">element</span><span class="o">-&gt;</span><span class="n">x</span><span class="p">;</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="n">element</span><span class="o">-&gt;</span><span class="n">y</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">upperBound_X</span><span class="o">/</span><span class="mi">2</span><span class="p">){</span> <span class="c1">//NE or SE</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">node</span> <span class="o">-&gt;</span> <span class="n">upperBound_Y</span> <span class="o">/</span> <span class="mi">2</span><span class="p">){</span> <span class="c1">//NE</span>
+      <span class="n">element</span><span class="o">-&gt;</span><span class="n">quadrant</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+
+
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//SE</span>
+      <span class="n">element</span><span class="o">-&gt;</span><span class="n">quadrant</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//NW, SW</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">node</span><span class="o">-&gt;</span> <span class="n">upperBound_Y</span><span class="o">/</span><span class="mi">2</span><span class="p">){</span> <span class="c1">//NW</span>
+      <span class="n">element</span><span class="o">-&gt;</span><span class="n">quadrant</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span> <span class="c1">//SW</span>
+      <span class="n">element</span><span class="o">-&gt;</span><span class="n">quadrant</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">element</span><span class="o">-&gt;</span><span class="n">quadrant</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">getPointsList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;The node is NULL can&#39;t get any information about it</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;******** List of points inside this Node ********* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;This node has a total of %zd Points</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span>  <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;(%d, %d)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">,</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">getNodeMean</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">getNodeMean</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;This node doesn&#39;t have any values stored yet</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">double</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+      <span class="n">x</span><span class="o">+=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">x</span><span class="p">;</span>
+      <span class="n">y</span><span class="o">+=</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span><span class="p">;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">pointsArrayMean</span><span class="p">.</span><span class="n">used</span><span class="p">;</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;The node mean is (%f, %f)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">getNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;This node doesn&#39;t exist</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">leftNeighborList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="n">rightNeighborList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="n">topNeighborList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="n">bottomNeighborList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span>
+
+
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">leftNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">leftNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">2</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">leftNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">leftNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">leftNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">leftNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">leftNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">leftNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">);</span>
+    <span class="n">leftNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">getPointsList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+
+<span class="kt">void</span> <span class="nf">rightNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">rightNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">2</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">rightNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">rightNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">rightNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">rightNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">rightNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">rightNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">);</span>
+    <span class="n">rightNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">getPointsList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">topNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">topNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">2</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">topNeighbor</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">topNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">topNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">topNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">topNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">);</span>
+    <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">getPointsList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">bottomNeighborList</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">bottomNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="mi">2</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+      <span class="n">bottomNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">bottomNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">bottomNeighbor</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">bottomNeighborList</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">parent</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">bottomNeighborListUtil</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">);</span>
+    <span class="n">topNeighborListUtil</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">getPointsList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">getListByLevel</span><span class="p">(</span><span class="n">Node</span> <span class="o">*</span><span class="n">node</span><span class="p">,</span> <span class="kt">int</span> <span class="n">level</span><span class="p">){</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">node</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">){</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">level</span> <span class="o">==</span> <span class="n">level</span><span class="p">){</span>
+    <span class="n">getPointsList</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">getListByLevel</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">ne</span><span class="p">,</span><span class="n">level</span><span class="p">);</span>
+    <span class="n">getListByLevel</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">nw</span><span class="p">,</span><span class="n">level</span><span class="p">);</span>
+    <span class="n">getListByLevel</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">,</span><span class="n">level</span><span class="p">);</span>
+    <span class="n">getListByLevel</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">sw</span><span class="p">,</span><span class="n">level</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="cm">/**********************</span>
+<span class="cm">Dynamic Point Array Structure</span>
+<span class="cm">***********************/</span>
+
+<span class="kt">void</span> <span class="nf">initArray</span><span class="p">(</span><span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">initialSize</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span> <span class="o">=</span> <span class="p">(</span><span class="n">Point</span> <span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">((</span><span class="n">initialSize</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">Point</span><span class="p">));</span>
+  <span class="n">a</span><span class="o">-&gt;</span><span class="n">used</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">a</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="n">initialSize</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">freeArray</span><span class="p">(</span><span class="n">PointArray</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">free</span><span class="p">(</span><span class="n">a</span><span class="o">-&gt;</span><span class="n">array</span><span class="p">);</span>
+  <span class="c1">//a-&gt;array = NULL;</span>
+  <span class="n">a</span><span class="o">-&gt;</span><span class="n">used</span> <span class="o">=</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="c1">//Create the initial QuadTree Structure</span>
+  <span class="n">QuadTree</span> <span class="n">quadTree</span><span class="p">;</span>
+  <span class="n">Node</span> <span class="n">root</span><span class="p">;</span>
+  <span class="n">root</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+
+  <span class="n">root</span><span class="p">.</span><span class="n">lowerBound_X</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">root</span><span class="p">.</span><span class="n">upperBound_X</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+  <span class="n">root</span><span class="p">.</span><span class="n">lowerBound_Y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">root</span><span class="p">.</span><span class="n">upperBound_Y</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+  <span class="n">root</span><span class="p">.</span><span class="n">level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">quadTree</span><span class="p">.</span><span class="n">root</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">;</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span><span class="n">PARTITION</span><span class="p">);</span>
+  <span class="n">initArray</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArrayMean</span><span class="p">,</span><span class="mi">3000</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine insert ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+
+  <span class="n">Point</span> <span class="n">pt1</span><span class="p">;</span> <span class="n">pt1</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">pt1</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt1</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt2</span><span class="p">;</span> <span class="n">pt2</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">pt2</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt2</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt3</span><span class="p">;</span> <span class="n">pt3</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">15</span> <span class="p">;</span> <span class="n">pt3</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt3</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine subdivision (inserting a 4th point) ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt4</span><span class="p">;</span> <span class="n">pt4</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="p">;</span> <span class="n">pt4</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">16</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt4</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt5</span><span class="p">;</span> <span class="n">pt5</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">13</span> <span class="p">;</span> <span class="n">pt5</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">13</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt5</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt6</span><span class="p">;</span> <span class="n">pt6</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">9</span> <span class="p">;</span> <span class="n">pt6</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt6</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt7</span><span class="p">;</span> <span class="n">pt7</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">8</span> <span class="p">;</span> <span class="n">pt7</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt7</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt8</span><span class="p">;</span> <span class="n">pt8</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">;</span> <span class="n">pt8</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">15</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt8</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt9</span><span class="p">;</span> <span class="n">pt9</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">12</span> <span class="p">;</span> <span class="n">pt9</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">17</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt9</span><span class="p">);</span>
+  <span class="n">Point</span> <span class="n">pt10</span><span class="p">;</span> <span class="n">pt10</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">11</span> <span class="p">;</span> <span class="n">pt10</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span> <span class="n">insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">root</span><span class="p">.</span><span class="n">pointsArray</span><span class="p">,</span> <span class="n">pt10</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine mean on the north east, node level 2 ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">getNodeMean</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">ne</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine getPointsList with northWest Node (prints the mean)  ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">getPointsList</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">nw</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine getPointsList with NorthWest -&gt; SouthEast (prints points)  ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">getPointsList</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">nw</span><span class="o">-&gt;</span><span class="n">se</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine getNeighborList ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">getNeighborList</span><span class="p">(</span><span class="n">root</span><span class="p">.</span><span class="n">se</span><span class="p">);</span>
+
+  <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n\n</span><span class="s">********************* Testing the routine getListByLevel ********************* </span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">);</span>
+  <span class="n">getListByLevel</span><span class="p">(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div></div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pruebas">3. Pruebas</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>El programa se provó diversas veces, con diferentes puntos, colocados en diferentes lugares y puntos estrategicos para corroborar la funcionalidad del mismo, en el código se dejaron 10 puntos bases, para demostrar una funcionalidad más clara del programa.</p></div>
+<div class="paragraph"><p>Conforme al desarrollo del programa, y por cada implementación de un módulo, se realizaban las pruebas correspondientes, las cuales intentaban, a toda costa, ocasionar uno o varios <em>Bugs</em>.
+Al encontrar algún <em>Bug</em>, se corregia, se rectificaba que, en efecto, se habia eliminado y se continuaba
+con la implementación del siguiente módulo.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Nota" src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAJXElEQVRo3u2ZW4xcZ5HHf1Xf951z
+uudqD2PPxRPs2AnGTlg7K0jihDiBJIzA4g5P8IDywOUBgUBaZK3EC/JK2dU+IMFmxQMrJavdDCgo
+SOQCwUYBh4ADCIOdYM84YYjHl/Gt7UnPTE+fr/bhnG57nAXHyQSC5E8qzZxudc/3r/pX1b9qxMz4
+ez7K3/m5AuAKgL8lgLGxMRsdHbW+vj7r6+uz0dFRGxsb+6tWBXm1VWj79u02/sB9bN92J5XpY+Rn
+TnFqdoavT9ZY94nPsGPHDnnDRmBsbMzGH7iPHe96B+nk88wfeI54ZIrlMzN8bVXK+AP38eCDD9ob
+NgKjo6N27+oOKrVTzP9+LxocziviFeeF02kn/+zW8OijjxZ/RETeUBHYs2cPPVlG8w/7CNVAqARC
+FkiyQMgSBkdWsWfPHmKMAFh5Xg8A/rLCJWIiQqVSIT82SagG1CvqFBcU9UUkdHiYubmn8f5lX28i
+gojgnFv0RpIkpGna/kyz2aTRaHDu3DlZSgCcOfZbPvCRezg5fZwVWSguHAoQ6h2udxk1Ejo7K/zs
+h99i2bJuujorZFmKqtJmk1wIIBZkEEVEy6jBqmvuxszsL1HwsgB472mc3ccH77qKf/3WTv5tQw++
+mqAl9/3QavL+q/nPXXs5WzvLzPEn8fMZ2lUhZgHnpARwEXPFgSaIZoiEAgBGmqbEGF8WrVedA0V4
+lffeeT2dt27ky/trTDcDumIQ9w9bOd0xzFfGnmBmfB/RIo2FnBghj5FWCkQTDIdpdt4kgKQgCWgC
+LkM0bQNYMgqFEIg41Kd87lPv4pPPHOKepycZ3/U88AtuGuhlW7XJ2r7AU9lKZl5q0N2VEU3Jo+Lw
+gBQet/MXE00QDYVJAqKYRNI0Jc9zQghLE4FKpYKqw/uENMv4wqfv4re1Ov+zoYtfvX053xhR1mbC
+tl8fZ+uWtbw0mzM3ZzQXhIiC+NICoh1tgwASyggEEI8Q8N4vbQTSNEXF43yC88Z1bxlhx/YP8U/f
+eYr9vz6MGTTzyB1b1tFZzZhvROYWjHMvLRDSBKfgvOLEYeSLIgCuBOfKhDacc1yq+l42hdR7RAPq
+IiHNeOu1q/jSZ+9m5twMj+zcz4GJ43R1ZQTvUfUYiqljds5QB5koooq7uMS2L1/SDOOV9L/LAuCc
+Q8QjmhC8kKQLVCoVurvmUTHu3rqet20Yptk0li3vIkkCgsNrwIeAmbCQQxSo+D/D6FaVski8IPmX
+DADicK6gUPCBjmpGnldwKlQrGStXLKfZjIgolWrRnAyl2RScKkkaLuoBgOsBrWDSBTYHoiBckv+X
+DSDGCCaAEHxCkgbyPMWsShocC80m0UBR1DmS4HGqpFmGiKLOE6MS1AN5cfFFp1FcHsHQpQdQr9dR
+VVQE54TEJ1iaguWkwZPnOSCIFpcIwZMkgTRNgLJbO4cLKaYJSPUCkZGXzM8Q8jaFlj4CIqhz5FEI
+icNiwElKjIE8RlQVp44YDVSLvFFH8J7TtTpTR09zw+bNWNFuOXjoMKfOzPCPmzaSuBQRxTDAXhGA
+y+oDqopoUS1c8DhN+Pkz40RTfv/cESYm5+jsGaTaPcCv9p3gP/7rp+zd/yLOJxw+epbdeyZ5fNez
+HPrjMUQTvv3fP+LFw6fo7e7m2w88gmhx9aLRXbqEXjaA7q4qoh71Kd4HVD0nT9d5+NHf8NK8o3a2
+zk9/vo8jx04zfaLGlz//cQ5N1jkyLczMpSRplZtu3MTVa0YwYPrkGW6/7QbWv2UNQwN9mChC0QdM
+3dJH4GXa2IwV/T08e/AYd91+A+/euomDE4f55TN/4J03X4+I8OH338zjT+zm+reuYsP6NW1hZnh6
+e3r4l3//Xx586Eluu+XGopm9nvPA/3dWruilt7ez/byst4uJF6bYcuOGNsg8Lz1pCzTmZwF45LEn
+2fy2tdyw6VqeO/AnFprzQOfrB6Ber7+MkOqrDKwcYmHhF+cB9ffSt7yb7/3gKa65ephnD/yJD7zv
+9lLNOmbn5gE4N1NnzeohnHNsWL+aY9PnWi25tLi0AGq1GlddNYBIwLmEPM9R16BvWZUvfnYb6grF
+uPXWzYDwzps3cfxEjdtu2UyWJYgoK1f0sXzqFCLKRz94N4//+Gl+s/cQMc+57rprGRocBBUQg+iW
+FsDU1BRvWtZTdtGAc44oxTTV1dWJxVnMiioi4kjSDlYN9RdTVtkXsqzCrTdtApQQYNvoLS01V5pg
+SKE1yMnz/JJ66BUDGB8fZ2iwvwAgvtTzOeCK0opg0QozKSQBgqpiOEQcqF2geRZ7WPAIWjigGJ6X
+VsxNTEzQ399TzKztZlO0fIvFc7RIbtCqfqpSRAAFWiXSl2LNFitR1cIZUipR4y8OMpddRl944Xmu
+GhkqQoyAcf53UcyUGB15VPJcCovFa2ZalsjCwyDF4NIyKb+nbJSiBaAkSZYGwM6dO23Xrp9wxx13
+Fl43w1pS1ygjUihVMy1N2k62lm4o+W6imMW2FTR0SCkUBSlF4xIl8dTUFB/70B1UKykL9ZOYWJln
+0m4+xb4nomrlpQoKiRTvtXS+mIIqqpWLhBaggpiVjim00GsaKVs7mb179/K+94yWnAeLBtEwYtuz
+IkXC+lIzAWj52vlktKJEGkQWFlNBBMwRpQBgllOv11/7QGNmdv/99/PVr9xDY/YEZpGjR6fJmw1+
+t+8A0ydO87v9E1iMdHV20NPTwdrVg1y3YR0iMDzUX0Shve2JCBGJzcUBUI/aAmbGi0eOsn/fBLVa
+bUkAFFOV5Xz34SewPOexH+1maNVaurs66ehezpprljEwMMDs7Cxnz9WYnDYe++b3mTlznGo1o7O7
+g5GhAa5dN8L1G69hYKAfs/ND/dSRUxydPsn4xCR/nDzC5ORRjk6f4t57721H81Vtp83MYowMDw/T
+bDYREbZs2cLo6CgDAwN0dnYiIsXGrtFAVQkhkOc58/PzqCr1ep3du3fT0dHBwYMHeeihh1BVVq9+
+8wWjqmdwcJD169ezbt06Nm7cSH9/P1mWMTIyQqVSkVe9Xm82m9ZsNpmdnWVubo5Go0GMsc3rVqK1
+nluc997jnGv/bOWImTE3N7do8WtmNJvN9hDvnCNJEpIkoVKp4L1/7btRVW17uDXge+9pbZtb1gr5
+hc8X7za994uoISLEGNvSoWVJkrw2Cl35L+UVAFcAXAFwBcClzv8B3eu58OmgDQoAAAAASUVORK5C
+YII=">
+</td>
+<td class="content">
+<div class="title">NOTA</div>
+<div class="paragraph"><p>La salida del programa, se muestra a continuación:</p></div>
+</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content"><div class="highlight"><pre>********************* Testing the routine insert *********************
+Inserting point x:1 y:1
+Inserting point x:2 y:3
+Inserting point x:15 y:17
+
+
+********************* Testing the routine subdivision (inserting a 4th point) *********************
+Number of points exceeded, partitioning into nodes!
+Inserting Node in Southwest Point: x :1  y: 1
+Inserting point x:1 y:1
+Inserting Node in Southwest Point: x :2  y: 3
+Inserting point x:2 y:3
+Inserting point x:15 y:17
+Inserting Node in Northeast Point: x :15  y: 17
+Inserting Node in Northwest Point: x :10  y: 16
+Inserting point x:10 y:16
+END OF PARTITIONING
+Inserting point x:13 y:13
+Inserting point x:9 y:12
+Inserting point x:8 y:12
+Number of points exceeded, partitioning into nodes!
+Inserting point x:10 y:16
+Inserting Node in Northeast Point: x :10  y: 16
+Inserting Node in Southeast Point: x :9  y: 12
+Inserting point x:9 y:12
+Inserting Node in Southeast Point: x :8  y: 12
+Inserting point x:8 y:12
+Inserting Node in Southwest Point: x :5  y: 15
+Inserting point x:5 y:15
+END OF PARTITIONING
+Inserting point x:12 y:17
+Number of points exceeded, partitioning into nodes!
+Inserting Node in Northwest Point: x :15  y: 17
+Inserting point x:15 y:17
+Inserting Node in Southwest Point: x :13  y: 13
+Inserting point x:13 y:13
+Inserting Node in Northwest Point: x :12  y: 17
+Inserting point x:12 y:17
+Inserting Node in Southwest Point: x :11  y: 12
+Inserting point x:11 y:12
+END OF PARTITIONING
+
+
+********************* Testing the routine mean on the north east, node level 2 *********************
+The node mean is (12.750000, 14.750000)
+
+
+********************* Testing the routine getPointsList with northWest Node (prints the mean)  *********************
+******** List of points inside this Node *********
+This node has a total of 4 Points
+The node mean is (8.000000, 13.750000)
+
+
+********************* Testing the routine getPointsList with NorthWest -&gt; SouthEast (prints points)  *********************
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(9, 12)
+(8, 12)
+
+
+********************* Testing the routine getNeighborList *********************
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(1, 1)
+(2, 3)
+******** List of points inside this Node *********
+This node has a total of 0 Points
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(13, 13)
+(11, 12)
+
+
+********************* Testing the routine getListByLevel *********************
+******** List of points inside this Node *********
+This node has a total of 0 Points
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(15, 17)
+(12, 17)
+******** List of points inside this Node *********
+This node has a total of 0 Points
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(13, 13)
+(11, 12)
+******** List of points inside this Node *********
+This node has a total of 1 Points
+(10, 16)
+******** List of points inside this Node *********
+This node has a total of 0 Points
+******** List of points inside this Node *********
+This node has a total of 2 Points
+(9, 12)
+(8, 12)
+******** List of points inside this Node *********
+This node has a total of 1 Points
+(5, 15)
+</pre></div></div></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-09-16 20:49:18 CDT
+</div>
+</div>
+</body>
+</html>

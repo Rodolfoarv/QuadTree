@@ -1,0 +1,104 @@
+= Examen 1er Parcial: Elaboración de un Quadtree.
+:author:   Rodolfo Andrés Ramírez Valenzuela (A01169701) y Luis Eduardo Ballinas Aguilar (A01371743)
+:email:     A01169701@itesm.mx y  A01371743@itesm.mx
+:encoding:  utf-8
+:revdate:   16 de septiembre, 2015.
+:numbered:
+
+
+== Introducción
+
+El siguiente programa fue elaborado, como entrega de 1er parcial para la materia de
+Programación avanzada por Rodolfo Andrés Ramírez Valenzuela y Luis Eduardo Ballinas
+Aguilar.
+
+
+
+En este reporte se detalla a nivel usuario la funcionalidad del programa, usando los
+conocimientos adquiridos en la clase y también, indagando por nuestra cuenta.
+
+
+
+== Quadtree
+
+A lo largo de las lineas de código, se muestra comentado, para facilitar el entendimiento
+del mismo y que sea más facíl su comprensión.
+
+Se declararon 3 *struct*, el primero llamado *point* hace referencia al punto con cordenadas 
+en _x_ y _y_, el segundo llamado *PointArray*, que se ocupa para almacnar las instancias del
+*struct* anterior, y el último, que recibe el nombre de *Node*, el cual como su nombre lo indica,
+es el *struct*, que representa a los nodos del _QuadTree_.
+
+Se definen 17 metodos, los cuales se encuentran clasificados de dos formas.
+
+- QuadTree routines.
+- Neighbor Routines.
+
+En la primera clasificación, se encuentran 9 metodos, que corresponden a la directa funcionalidad del
+_QuadTree_.
+
+- *insert*: Este método, recibe de parametros: un apuntador a una variable de tipo *Node*, un apuntador a
+una variable de tipo *PointArray* y una variable de tipo *Point*.
+Este método tiene como proposito, _insertar_ un _nodo_ en el _QuadTree_, respetando las reglas que rigen
+a este tipo de estructuras.
+
+- *subdivision*: Este método, recibe de parametros: un apuntador a una variable de tipo *Node*, un apuntador a
+una variable de tipo *PointArray* y una variable de tipo *Point*.
+Este método se encarga de asignarle a un _nodo padre_  sus respectivos *4 hijos*, es decir se encarga de *dividir uniformemente el espacio*.
+
+- *initArray*: Este método, recibe de parametros: Un apuntador a una variable de tipo *PointArray*, y una 
+variable de tipo *size_t*.
+Este metodo se encarga de iniciar el *PointArray*. que es en donde se guardarán los puntos en un nodo.
+
+- *freeArray*: Este método, recibe de parametros: Un apuntador a una variable de tipo *PointArray*.
+Este método se encarga de _liberar_ el *PointArray*.
+
+- *getQuadrant*: Recibe de parametros: Un apuntador hacia una variable de tipo *Node*, y un apuntador hacia una variable de tipo *Point*.
+Este método, se encarga de, *regresar un int entre 1 y 4*, indicando el *cuadrante*, al que dicho nodo pertenece.
+
+- *getPointsList*: Recibe de parametro, un apuntador a una variable de tipo *Node*.
+Obtiene los puntos dentro de ese nodo, y de tener hijos, regresa el promedio de esos puntos.
+
+- *getNodeMean*: Recibe de parametro, un apuntador a una variable de tipo *Node*.
+Obtiene el promedio de los puntos que tiene un Nodo.
+
+- *getNeighborList*: Recibe de parametro, un apuntador a una variable de tipo *Node*.
+Obtiene los puntos que son *vecinos* a un *nodo* determinado.
+
+- *getListByLevel*: Recibe de parametrosÑ  un apuntador a una variable de tipo *Node* y una variable de tipo
+*int*.
+Obtiene todos los puntos dependiendo del nivel especificado.
+
+
+En la segunda clasificación, los metodos restantes, todos reciben de parametro, un apuntador a una variable de tipo *Node*, y dichos metodos, sirven para identificar los nodos que son vecinos a un punto, y posteriormente se llaman en el método conocido como *getNeighborList*.
+
+
+[NOTE]
+.NOTA
+================================================================================
+El código completo se muestra a continuación:
+================================================================================
+
+[source,c]
+--------------------------------------------------------------------------------
+include::quadtree.c[]
+--------------------------------------------------------------------------------
+
+== Pruebas
+
+El programa se provó diversas veces, con diferentes puntos, colocados en diferentes lugares y puntos estrategicos para corroborar la funcionalidad del mismo, en el código se dejaron 10 puntos bases, para demostrar una funcionalidad más clara del programa.
+
+Conforme al desarrollo del programa, y por cada implementación de un módulo, se realizaban las pruebas correspondientes, las cuales intentaban, a toda costa, ocasionar uno o varios _Bugs_.
+Al encontrar algún _Bug_, se corregia, se rectificaba que, en efecto, se habia eliminado y se continuaba
+con la implementación del siguiente módulo.
+
+[NOTE]
+.NOTA
+================================================================================
+La salida del programa, se muestra a continuación:
+================================================================================
+
+[source,text]
+--------------------------------------------------------------------------------
+include::test1.txt[]
+--------------------------------------------------------------------------------

@@ -33,7 +33,8 @@ typedef struct Nodes{
   struct Nodes *se;             //SouthEast Node
   struct Nodes *sw;             //SouthWest Node
   struct Nodes *parent;         //The node's parent
-  unsigned int size;            // Size of the current node
+  unsigned int currentSize;
+  unsigned int limitSize;            // Size of the current node
   unsigned int level;           //Level on the tree i.e (1,2,3,4,5)
   unsigned int upperBound_X;
   unsigned int lowerBound_X;
@@ -82,27 +83,34 @@ void topNeighborListUtil(Node *node);
 
 
 void insert(Node *node, PointArray *a, Point element) {
-  node->pointsArrayMean.array[node->pointsArrayMean.used++] = element;
-  if (a-> size == 0){
-    int quadrant = getQuadrant(node, &element);
-    if (quadrant == 1){
-      insert(node->ne,&(node->ne->pointsArray),element);
-    }else if (quadrant == 2){
-      insert(node->se,&(node->se->pointsArray),element);
-    }else if (quadrant == 3){
-      insert(node->sw,&(node->sw->pointsArray),element);
-    }else{
-      insert(node->nw,&(node->nw->pointsArray),element);
+  node->currentSize++;
+  if (node->currentSize >= node->limitSize){
+    printf("The tree has exceeded it's capacity\n" );
+  }else{
+    node->pointsArrayMean.array[node->pointsArrayMean.used++] = element;
+    if (a-> size == 0){
+      int quadrant = getQuadrant(node, &element);
+      if (quadrant == 1){
+        insert(node->ne,&(node->ne->pointsArray),element);
+      }else if (quadrant == 2){
+        insert(node->se,&(node->se->pointsArray),element);
+      }else if (quadrant == 3){
+        insert(node->sw,&(node->sw->pointsArray),element);
+      }else{
+        insert(node->nw,&(node->nw->pointsArray),element);
 
+      }
+    }else if (a->used == a->size-1){
+      printf("Number of points exceeded, partitioning into nodes!\n" );
+      subdivision(node, a, element);
+      freeArray(a);
+    }else{ //Insert into the original node
+      printf("Inserting point x:%d y:%d \n", element.x, element.y );
+      a->array[a->used++] = element;
     }
-  }else if (a->used == a->size-1){
-    printf("Number of points exceeded, partitioning into nodes!\n" );
-    subdivision(node, a, element);
-    freeArray(a);
-  }else{ //Insert into the original node
-    printf("Inserting point x:%d y:%d \n", element.x, element.y );
-    a->array[a->used++] = element;
   }
+
+
 }
 
 
@@ -124,6 +132,12 @@ void subdivision (Node *node, PointArray *a, Point element){
   node->nw->parent = node;
   node->se->parent = node;
   node->sw->parent = node;
+
+  //Limit size
+  node->ne->limitSize = node->limitSize - node->currentSize;
+  node->nw->limitSize = node->limitSize - node->currentSize;
+  node->se->limitSize = node->limitSize - node->currentSize;
+  node->sw->limitSize = node->limitSize - node->currentSize;
 
   //Create the array of points for the childs
   initArray(&(node->ne->pointsArray),PARTITION);
@@ -449,7 +463,8 @@ int main(){
   //Create the initial QuadTree Structure
   QuadTree quadTree;
   Node root;
-  root.size = 20;
+  root.limitSize = 20;
+  root.currentSize = 0;
 
   root.lowerBound_X = 0;
   root.upperBound_X = 20;
@@ -462,33 +477,32 @@ int main(){
 
   printf("\n\n********************* Testing the routine insert ********************* \n" );
 
-  Point pt1; pt1.x = 1 ; pt1.y = 1; insert(&root, &root.pointsArray, pt1);
-  Point pt2; pt2.x = 2 ; pt2.y = 3; insert(&root, &root.pointsArray, pt2);
-  Point pt3; pt3.x = 15 ; pt3.y = 17; insert(&root, &root.pointsArray, pt3);
+  Point pt1; pt1.x = 1 ; pt1.y = 1; insert(quadTree.root, &root.pointsArray, pt1);
+  Point pt2; pt2.x = 2 ; pt2.y = 3; insert(quadTree.root, &root.pointsArray, pt2);
+  Point pt3; pt3.x = 15 ; pt3.y = 17; insert(quadTree.root, &root.pointsArray, pt3);
 
   printf("\n\n********************* Testing the routine subdivision (inserting a 4th point) ********************* \n" );
-  Point pt4; pt4.x = 10 ; pt4.y = 16; insert(&root, &root.pointsArray, pt4);
-  Point pt5; pt5.x = 13 ; pt5.y = 13; insert(&root, &root.pointsArray, pt5);
-  Point pt6; pt6.x = 9 ; pt6.y = 12; insert(&root, &root.pointsArray, pt6);
-  Point pt7; pt7.x = 8 ; pt7.y = 12; insert(&root, &root.pointsArray, pt7);
-  Point pt8; pt8.x = 5 ; pt8.y = 15; insert(&root, &root.pointsArray, pt8);
-  Point pt9; pt9.x = 12 ; pt9.y = 17; insert(&root, &root.pointsArray, pt9);
-  Point pt10; pt10.x = 11 ; pt10.y = 12; insert(&root, &root.pointsArray, pt10);
+  Point pt4; pt4.x = 10 ; pt4.y = 16; insert(quadTree.root, &root.pointsArray, pt4);
+  Point pt5; pt5.x = 13 ; pt5.y = 13; insert(quadTree.root, &root.pointsArray, pt5);
+  Point pt6; pt6.x = 9 ; pt6.y = 12; insert(quadTree.root, &root.pointsArray, pt6);
+  Point pt7; pt7.x = 8 ; pt7.y = 12; insert(quadTree.root, &root.pointsArray, pt7);
+  Point pt8; pt8.x = 5 ; pt8.y = 15; insert(quadTree.root, &root.pointsArray, pt8);
+  Point pt9; pt9.x = 12 ; pt9.y = 17; insert(quadTree.root, &root.pointsArray, pt9);
+  Point pt10; pt10.x = 11 ; pt10.y = 12; insert(quadTree.root, &root.pointsArray, pt10);
 
   printf("\n\n********************* Testing the routine mean on the north east, node level 2 ********************* \n" );
-  getNodeMean(root.ne);
+  getNodeMean(quadTree.root->ne);
 
   printf("\n\n********************* Testing the routine getPointsList with northWest Node (prints the mean)  ********************* \n" );
-  getPointsList(root.nw);
+  getPointsList(quadTree.root->nw);
 
   printf("\n\n********************* Testing the routine getPointsList with NorthWest -> SouthEast (prints points)  ********************* \n" );
-  getPointsList(root.nw->se);
+  getPointsList(quadTree.root->nw->se);
 
   printf("\n\n********************* Testing the routine getNeighborList ********************* \n" );
-  getNeighborList(root.se);
+  getNeighborList(quadTree.root->se);
 
   printf("\n\n********************* Testing the routine getListByLevel ********************* \n" );
-  getListByLevel(&root, 2);
-
+  getListByLevel(quadTree.root, 2);
   return 1;
 }

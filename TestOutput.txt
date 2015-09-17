@@ -1,0 +1,98 @@
+********************* Testing the routine insert ********************* 
+Inserting point x:1 y:1 
+Inserting point x:2 y:3 
+Inserting point x:15 y:17 
+
+
+********************* Testing the routine subdivision (inserting a 4th point) ********************* 
+Number of points exceeded, partitioning into nodes!
+Inserting Node in Southwest Point: x :1  y: 1 
+Inserting point x:1 y:1 
+Inserting Node in Southwest Point: x :2  y: 3 
+Inserting point x:2 y:3 
+Inserting point x:15 y:17 
+Inserting Node in Northeast Point: x :15  y: 17 
+Inserting Node in Northwest Point: x :10  y: 16 
+Inserting point x:10 y:16 
+END OF PARTITIONING
+Inserting point x:13 y:13 
+Inserting point x:9 y:12 
+Inserting point x:8 y:12 
+Number of points exceeded, partitioning into nodes!
+Inserting point x:10 y:16 
+Inserting Node in Northeast Point: x :10  y: 16 
+Inserting Node in Southeast Point: x :9  y: 12 
+Inserting point x:9 y:12 
+Inserting Node in Southeast Point: x :8  y: 12 
+Inserting point x:8 y:12 
+Inserting Node in Southwest Point: x :5  y: 15 
+Inserting point x:5 y:15 
+END OF PARTITIONING
+Inserting point x:12 y:17 
+Number of points exceeded, partitioning into nodes!
+Inserting Node in Northwest Point: x :15  y: 17 
+Inserting point x:15 y:17 
+Inserting Node in Southwest Point: x :13  y: 13 
+Inserting point x:13 y:13 
+Inserting Node in Northwest Point: x :12  y: 17 
+Inserting point x:12 y:17 
+Inserting Node in Southwest Point: x :11  y: 12 
+Inserting point x:11 y:12 
+END OF PARTITIONING
+
+
+********************* Testing the routine mean on the north east, node level 2 ********************* 
+The node mean is (12.750000, 14.750000)
+
+
+********************* Testing the routine getPointsList with northWest Node (prints the mean)  ********************* 
+******** List of points inside this Node ********* 
+This node has a total of 4 Points
+The node mean is (8.000000, 13.750000)
+
+
+********************* Testing the routine getPointsList with NorthWest -> SouthEast (prints points)  ********************* 
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(9, 12)
+(8, 12)
+
+
+********************* Testing the routine getNeighborList ********************* 
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(1, 1)
+(2, 3)
+******** List of points inside this Node ********* 
+This node has a total of 0 Points
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(13, 13)
+(11, 12)
+
+
+********************* Testing the routine getListByLevel ********************* 
+******** List of points inside this Node ********* 
+This node has a total of 0 Points
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(15, 17)
+(12, 17)
+******** List of points inside this Node ********* 
+This node has a total of 0 Points
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(13, 13)
+(11, 12)
+******** List of points inside this Node ********* 
+This node has a total of 1 Points
+(10, 16)
+******** List of points inside this Node ********* 
+This node has a total of 0 Points
+******** List of points inside this Node ********* 
+This node has a total of 2 Points
+(9, 12)
+(8, 12)
+******** List of points inside this Node ********* 
+This node has a total of 1 Points
+(5, 15)

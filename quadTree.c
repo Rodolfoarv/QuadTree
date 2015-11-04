@@ -475,6 +475,8 @@ int main(){
   initArray(&root.pointsArray,PARTITION);
   initArray(&root.pointsArrayMean,3000);
 
+
+
   printf("\n\n********************* Testing the routine insert ********************* \n" );
 
   Point pt1; pt1.x = 1 ; pt1.y = 1; insert(quadTree.root, &root.pointsArray, pt1);
